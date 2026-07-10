@@ -58,9 +58,9 @@ export default function ProductCard({ product }) {
         </div>
 
         <div className="flex items-center gap-2 mt-auto pt-1">
-          <span className="text-lg font-extrabold text-white">${price}</span>
+          <span className="text-lg font-extrabold text-white">KSH {price}</span>
           {oldPrice && (
-            <span className="text-xs text-[#6B6478] line-through">${oldPrice}</span>
+            <span className="text-xs text-[#6B6478] line-through">KSH {oldPrice}</span>
           )}
         </div>
 
