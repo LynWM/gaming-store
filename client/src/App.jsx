@@ -25,17 +25,11 @@ function App() {
             
             {/* Customer pages */}
             <Route element={<CustomerLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/:slug" element={<CategoryPage />} />
-          </Routes>
-          
-        </main>
-      <Footer />
-    </BrowserRouter>
-  )
-          </Route>
+              <Route path="/" element={<Home />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/:slug" element={<CategoryPage />} />
+            </Route>
 
           {/* Admin pages */}
           <Route path="/admin" element={<AdminLayout />}>
