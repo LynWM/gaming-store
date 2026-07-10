@@ -1,8 +1,14 @@
 import React, { useState } from 'react'
 import { Gamepad2, Eye, EyeOff, Lock } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/authContext'
 
 export default function Signup() {
+  const { signup } = useAuth()
+  const navigate = useNavigate()
+
   const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState('')
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -14,6 +20,17 @@ export default function Signup() {
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const result = signup(formData)
+
+    if (result.success) {
+      navigate('/')
+    } else {
+      setError(result.error)
+    }
   }
 
   return (
@@ -28,7 +45,7 @@ export default function Signup() {
           <p className='text-sm text-gray-400 mt-1'>Join the next generation of gaming</p>
         </div>
 
-        <form className='space-y-5' onSubmit={(e) => { e.preventDefault(); console.log(formData) }}>
+        <form className='space-y-5' onSubmit={handleSubmit}>
           <div>
             <label className='block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2'>
               First Name
@@ -119,6 +136,10 @@ export default function Signup() {
             </div>
           </div>
 
+          {error && (
+            <p className='text-sm text-red-400 text-center'>{error}</p>
+          )}
+
           <button 
             type='submit'
             className='w-full h-11 mt-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm rounded-lg shadow-lg shadow-purple-900/30 transition-all duration-200 transform active:scale-[0.98]'
@@ -129,12 +150,12 @@ export default function Signup() {
 
         <div className='text-center mt-6 text-sm text-gray-400'>
           Already have an account?{' '}
-          <a href='#login' className='text-purple-400 hover:text-purple-300 font-semibold underline transition'>
+          <Link to='/login' className='text-purple-400 hover:text-purple-300 font-semibold underline transition'>
             Log In
-          </a>
+          </Link>
         </div>
 
       </div>
     </div>
   )
-}   
+}
