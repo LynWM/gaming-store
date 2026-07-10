@@ -1,13 +1,25 @@
 import React, { useState } from 'react';
 import { Gamepad2, Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/authContext';
 
 export default function Login() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Logging in with:', formData);
+    const success = login(formData.email, formData.password);
+
+    if (success) {
+      navigate('/');
+    } else {
+      setError('Invalid email or password');
+    }
   };
 
   return (
@@ -61,18 +73,33 @@ export default function Login() {
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#535975]">
                 <Lock className="w-5 h-5" />
               </span>
-              <input type={showPassword ? 'text' : 'password'}required placeholder="••••••••"className="w-full bg-[#1c1f30] text-white placeholder-[#535975] text-sm rounded-xl pl-11 pr-11 py-3 border border-[#2a2f4a] focus:outline-none focus:border-[#9d4edd] focus:ring-1 focus:ring-[#9d4edd] transition-all duration-200" value={formData.password}onChange={(e) => setFormData({ ...formData, password: e.target.value })}/>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                placeholder="••••••••"
+                className="w-full bg-[#1c1f30] text-white placeholder-[#535975] text-sm rounded-xl pl-11 pr-11 py-3 border border-[#2a2f4a] focus:outline-none focus:border-[#9d4edd] focus:ring-1 focus:ring-[#9d4edd] transition-all duration-200"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#535975] hover:text-[#8c92b2] transition-colors" onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#535975] hover:text-[#8c92b2] transition-colors"
+                onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
           </div>
 
+          {error && (
+            <p className="text-sm text-red-400 text-center">{error}</p>
+          )}
+
           <div className="flex items-center">
-            <input id="remember-me"type="checkbox" className="h-4 w-4 bg-[#1c1f30] border-[#2a2f4a] rounded text-[#9d4edd] focus:ring-0 accent-[#9d4edd] cursor-pointer"
+            <input
+              id="remember-me"
+              type="checkbox"
+              className="h-4 w-4 bg-[#1c1f30] border-[#2a2f4a] rounded text-[#9d4edd] focus:ring-0 accent-[#9d4edd] cursor-pointer"
             />
             <label htmlFor="remember-me" className="ml-2 block text-sm text-[#8c92b2] cursor-pointer select-none">
               Keep me logged in
@@ -80,7 +107,8 @@ export default function Login() {
           </div>
 
           <button
-            type="submit" className="w-full bg-[#9d4edd] hover:bg-[#b57cff] text-white font-semibold text-sm rounded-xl py-3 px-4 flex items-center justify-center gap-2 shadow-lg shadow-[#9d4edd]/20 transform active:scale-[0.99] transition-all duration-150 group mt-2"
+            type="submit"
+            className="w-full bg-[#9d4edd] hover:bg-[#b57cff] text-white font-semibold text-sm rounded-xl py-3 px-4 flex items-center justify-center gap-2 shadow-lg shadow-[#9d4edd]/20 transform active:scale-[0.99] transition-all duration-150 group mt-2"
           >
             <span>Sign In</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -90,9 +118,9 @@ export default function Login() {
         <div className="mt-8 text-center border-t border-[#23263a] pt-6">
           <p className="text-sm text-[#8c92b2]">
             New to NextPlay?{' '}
-            <a href="#register" className="font-semibold text-[#9d4edd] hover:underline hover:text-[#b57cff] transition-all">
+            <Link to="/signup" className="font-semibold text-[#9d4edd] hover:underline hover:text-[#b57cff] transition-all">
               Create an account
-            </a>
+            </Link>
           </p>
         </div>
       </div>
