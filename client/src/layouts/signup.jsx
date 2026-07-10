@@ -1,6 +1,21 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { Gamepad2, Eye, EyeOff, Lock } from 'lucide-react'
 
 export default function Signup() {
+  const [showPassword, setShowPassword] = useState(false)
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    username: '',
+    email: '',
+    password: ''
+  })
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
   return (
     <div className='min-h-screen bg-[#0D0E12] text-white font-sans antialiased flex items-center justify-center p-4'>
       <div className='w-full max-w-md bg-[#161920] rounded-2xl border border-gray-800 p-8 shadow-2xl'>
@@ -13,15 +28,47 @@ export default function Signup() {
           <p className='text-sm text-gray-400 mt-1'>Join the next generation of gaming</p>
         </div>
 
-        <form className='space-y-5' onSubmit={(e) => e.preventDefault()}>
-          
+        <form className='space-y-5' onSubmit={(e) => { e.preventDefault(); console.log(formData) }}>
+          <div>
+            <label className='block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2'>
+              First Name
+            </label>
+            <input 
+              type='text' 
+              name="firstName"
+              required
+              value={formData.firstName}
+              onChange={handleChange}
+              className='w-full h-11 px-4 bg-[#1F2330] text-sm text-gray-200 placeholder-gray-600 rounded-lg border border-gray-700 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition'
+              placeholder='First Name'
+            />
+          </div>
+
+          <div>
+            <label className='block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2'>
+              Last Name
+            </label>
+            <input 
+              type='text' 
+              name="lastName"
+              required
+              value={formData.lastName}
+              onChange={handleChange}
+              className='w-full h-11 px-4 bg-[#1F2330] text-sm text-gray-200 placeholder-gray-600 rounded-lg border border-gray-700 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition'
+              placeholder='Last Name'
+            />
+          </div>
+
           <div>
             <label className='block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2'>
               Username
             </label>
             <input 
               type='text' 
+              name="username"
               required
+              value={formData.username}
+              onChange={handleChange}
               className='w-full h-11 px-4 bg-[#1F2330] text-sm text-gray-200 placeholder-gray-600 rounded-lg border border-gray-700 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition'
               placeholder='GamingID'
             />
@@ -33,22 +80,43 @@ export default function Signup() {
             </label>
             <input 
               type='email' 
+              name="email"
               required
+              value={formData.email}
+              onChange={handleChange}
               className='w-full h-11 px-4 bg-[#1F2330] text-sm text-gray-200 placeholder-gray-600 rounded-lg border border-gray-700 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition'
               placeholder='you@example.com'
             />
           </div>
 
-          <div>
-            <label className='block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2'>
-              Password
-            </label>
-            <input 
-              type='password' 
-              required
-              className='w-full h-11 px-4 bg-[#1F2330] text-sm text-gray-200 placeholder-gray-600 rounded-lg border border-gray-700 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition'
-              placeholder='••••••••'
-            />
+           <div>
+            <div className="flex justify-between items-center mb-2">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#8c92b2]">
+                Password
+              </label>
+            </div>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#535975]">
+                <Lock className="w-5 h-5" />
+              </span>
+              <input 
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                required 
+                placeholder="••••••••"
+                className="w-full bg-[#1c1f30] text-white placeholder-[#535975] text-sm rounded-xl pl-11 pr-11 py-3 border border-[#2a2f4a] focus:outline-none focus:border-[#9d4edd] focus:ring-1 focus:ring-[#9d4edd] transition-all duration-200" 
+                value={formData.password}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#535975] hover:text-[#8c92b2] transition-colors" 
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
 
           <button 
@@ -69,4 +137,4 @@ export default function Signup() {
       </div>
     </div>
   )
-}
+}   
