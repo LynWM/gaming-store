@@ -39,7 +39,7 @@ export default function Signup() {
         
         <div className='text-center mb-8'>
           <span className='text-2xl font-black tracking-wider text-white uppercase block mb-2'>
-            ⚡NEXPLAY⚡
+            NEXPLAY
           </span>
           <h2 className='text-xl font-bold text-gray-200'>Create an Account</h2>
           <p className='text-sm text-gray-400 mt-1'>Join the next generation of gaming</p>
