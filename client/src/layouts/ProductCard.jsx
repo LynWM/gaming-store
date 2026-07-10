@@ -1,9 +1,15 @@
 import React, { useState } from "react";
-import { Heart, ShoppingCart, Star } from "lucide-react";
+import { Heart, ShoppingCart, Star, Calendar, UserPlus } from "lucide-react";
+
+const CTA_ICONS = {
+  "Book Now": Calendar,
+  "Sign Up Now": UserPlus
+};
 
 export default function ProductCard({ product }) {
   const [saved, setSaved] = useState(false);
-  const { name, price, oldPrice, rating, reviews, tag, accent } = product;
+  const { name, price, oldPrice, rating, reviews, tag, accent, ctaLabel = "Add to Cart" } = product;
+  const CtaIcon = CTA_ICONS[ctaLabel] || ShoppingCart;
 
   const tagStyles = {
     New: "bg-[#3B82F6]/15 text-[#60A5FA]",
@@ -58,9 +64,9 @@ export default function ProductCard({ product }) {
         </div>
 
         <div className="flex items-center gap-2 mt-auto pt-1">
-          <span className="text-lg font-extrabold text-white">KSH {price}</span>
+          <span className="text-lg font-extrabold text-white">${price}</span>
           {oldPrice && (
-            <span className="text-xs text-[#6B6478] line-through">KSH {oldPrice}</span>
+            <span className="text-xs text-[#6B6478] line-through">${oldPrice}</span>
           )}
         </div>
 
@@ -68,8 +74,8 @@ export default function ProductCard({ product }) {
           className="mt-2 w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
           style={{ backgroundColor: accent.hex }}
         >
-          <ShoppingCart size={14} />
-          Add to Cart
+          <CtaIcon size={14} />
+          {ctaLabel}
         </button>
       </div>
     </div>
