@@ -3,7 +3,7 @@ export const mockUsers = [
     id: 1,
     name: "Jane Doe",
     email: "jane@test.com",
-    password: "password123", // plain text ok for mock/demo only
+    password: "password123",
     role: "customer",
   },
   {
