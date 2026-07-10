@@ -67,9 +67,9 @@ export default function Homepage() {
               </p>
             </div>
 
-            <a href="/shop-consoles" className='w-fit flex items-center gap-2 px-5 py-2.5 bg-[#7C3AED] hover:bg-[#6D28D9] font-bold text-sm text-white rounded-lg shadow-lg'>
+            <a href="/consoles" className="w-fit flex items-center gap-2 px-5 py-2.5 bg-[#7C3AED] hover:bg-[#6D28D9] font-bold text-sm text-white rounded-lg shadow-lg">
               Shop Consoles <ArrowRight size={14} />
-            </a>
+             </a>
           </div>
 
           <div className='flex flex-col gap-4 h-full'>
@@ -77,7 +77,7 @@ export default function Homepage() {
             <a href="/tournaments" className='flex-1 relative overflow-hidden bg-linear-to-br from-[#4C0519] to-[#1C000A] rounded-2xl border border-[#9F1239]/40 p-6 flex flex-col justify-end hover:border-[#F43F5E]/60'>
               <div className='absolute top-0 right-0 left-0 bottom-0 bg-[url("https://unsplash.com")] bg-cover bg-center opacity-15 mix-blend-luminosity' />
               <div className='relative z-10'>
-                <span className='text-[11px] font-bold tracking-wide text-[#FB7185] uppercase'>$50K Prize Pool</span>
+                <span className='text-[11px] font-bold tracking-wide text-[#FB7185] uppercase'> ksh 50K Prize Pool</span>
                 <h3 className='text-xl font-extrabold mt-0.5 tracking-tight text-white'>Tournaments</h3>
               </div>
             </a>
