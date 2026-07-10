@@ -1,0 +1,77 @@
+import React, { useState } from "react";
+import { Heart, ShoppingCart, Star } from "lucide-react";
+
+export default function ProductCard({ product }) {
+  const [saved, setSaved] = useState(false);
+  const { name, price, oldPrice, rating, reviews, tag, accent } = product;
+
+  const tagStyles = {
+    New: "bg-[#3B82F6]/15 text-[#60A5FA]",
+    Hot: "bg-[#EF4444]/15 text-[#F87171]",
+    Sale: "bg-[#10B981]/15 text-[#34D399]"
+  };
+
+  return (
+    <div
+      className="group relative flex flex-col rounded-2xl border border-[#231C30] bg-linear-to-b from-[#1B1625] to-[#110D1A] overflow-hidden transition-all duration-200 hover:-translate-y-1"
+      style={{ ["--accent"]: accent.hex }}
+    >
+      <button
+        onClick={() => setSaved((s) => !s)}
+        aria-label={saved ? "Remove from wishlist" : "Save to wishlist"}
+        className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-black/40 backdrop-blur flex items-center justify-center transition-colors hover:bg-black/60"
+      >
+        <Heart
+          size={16}
+          className={saved ? "fill-[#EC4899] text-[#EC4899]" : "text-white/80"}
+        />
+      </button>
+
+      <div
+        className="relative h-40 flex items-center justify-center overflow-hidden"
+        style={{
+          background: `radial-gradient(circle at 30% 20%, rgba(${accent.rgb},0.35), transparent 60%), linear-gradient(135deg, ${accent.from}, ${accent.via})`
+        }}
+      >
+        {tag && (
+          <span
+            className={`absolute top-3 left-3 text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full ${tagStyles[tag]}`}
+          >
+            {tag}
+          </span>
+        )}
+        <div
+          className="w-16 h-16 rounded-2xl border border-white/10 bg-white/5 group-hover:scale-110 transition-transform duration-300"
+          style={{ boxShadow: `0 0 30px rgba(${accent.rgb},0.25)` }}
+        />
+      </div>
+
+      <div className="flex flex-col gap-2 p-4 flex-1">
+        <h3 className="text-sm font-semibold text-white leading-snug line-clamp-2 min-h-[2.5rem]">
+          {name}
+        </h3>
+
+        <div className="flex items-center gap-1.5">
+          <Star size={13} className="fill-[#EAB308] text-[#EAB308]" />
+          <span className="text-xs font-medium text-white/80">{rating}</span>
+          <span className="text-xs text-[#6B6478]">({reviews})</span>
+        </div>
+
+        <div className="flex items-center gap-2 mt-auto pt-1">
+          <span className="text-lg font-extrabold text-white">${price}</span>
+          {oldPrice && (
+            <span className="text-xs text-[#6B6478] line-through">${oldPrice}</span>
+          )}
+        </div>
+
+        <button
+          className="mt-2 w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
+          style={{ backgroundColor: accent.hex }}
+        >
+          <ShoppingCart size={14} />
+          Add to Cart
+        </button>
+      </div>
+    </div>
+  );
+}
