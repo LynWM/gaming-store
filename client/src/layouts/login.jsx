@@ -12,8 +12,8 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-[#0b0c10] text-[#f5f5f7] flex items-center justify-center font-sans px-4 antialiased selection:bg-[#9d4edd] selection:text-white">
-      <div className="absolute w-[400px] h-[400px] bg-[#9d4edd]/10 rounded-full blur-[120px] top-1/4 left-1/3 pointer-events-none" />
-      <div className="absolute w-[300px] h-[300px] bg-[#3a0ca3]/20 rounded-full blur-[100px] bottom-1/4 right-1/3 pointer-events-none" />
+      <div className="absolute w-100 h-100 bg-[#9d4edd]/10 rounded-full blur-[120px] top-1/4 left-1/3 pointer-events-none" />
+      <div className="absolute w-75 h-75 bg-[#3a0ca3]/20 rounded-full blur-[100px] bottom-1/4 right-1/3 pointer-events-none" />
 
       <div className="w-full max-w-md bg-[#131520] border border-[#23263a] rounded-2xl p-8 shadow-2xl relative z-10">
         <div className="flex items-center gap-2 mb-8 justify-center">

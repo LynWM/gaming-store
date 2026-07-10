@@ -1,73 +1,53 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart } from "lucide-react";
+import { Gamepad2, Heart, ShoppingCart, User } from "lucide-react";
 
-// ---- Color tokens ----
-const colors = {
-  navbar: "#0d0d17",
-  border: "rgba(124,58,237,0.15)",
-  navText: "#a1a1b5",
-  violet: "#7c3aed"
-};
-
-export default function Navbar({ cartCount = 0, onOpenSignIn }) {
-  const linkStyle = { color: colors.navText };
-
-  const hoverProps = {
-    onMouseOver: (e) => (e.currentTarget.style.color = colors.violet),
-    onMouseOut: (e) => (e.currentTarget.style.color = colors.navText),
-  };
-
+export default function Navbar() {
   return (
-    <nav
-      style={{
-        background: colors.navbar,
-        borderBottom: `1px solid ${colors.border}`,
-      }}
-      className="w-full sticky top-0 z-50"
-    >
-      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 shrink-0">
-          <span
-            className="text-xl font-bold tracking-tight"
-            style={{ color: colors.violet }}
-          >
-            NEXPLAY
-          </span>
+    <nav className="bg-[#110D1A] h-16 flex items-center px-6 border-b border-[#231C30] justify-between gap-4">
+      {/* Two-tone logo */}
+      <Link to="/" className="text-xl font-black tracking-wider uppercase shrink-0 cursor-pointer">
+        <span className="text-white">⚡NEX</span>
+        <span className="text-purple-500">PLAY⚡</span>
+      </Link>
+
+      {/* Search bar */}
+      <div className="w-full max-w-md">
+        <input
+          type="text"
+          className="w-full h-10 px-4 bg-[#1B1625] text-sm text-gray-200 placeholder-gray-500 rounded-full border border-[#2A233A] focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+          placeholder="Search games, hardware, accounts..."
+        />
+      </div>
+
+      {/* Icon nav */}
+      <div className="flex items-center gap-4">
+        <Link
+          to="/products"
+          className="flex items-center gap-2 px-4 py-2 bg-[#1B1625] text-sm text-gray-200 rounded-full border border-[#2A233A] hover:bg-[#231C30] focus:outline-none focus:ring-1 focus:ring-purple-500"
+        >
+          <Gamepad2 size={16} />
         </Link>
 
-        {/* Right-side nav */}
-        <div className="flex items-center gap-7 text-sm font-medium">
-          <Link to="/" style={linkStyle} className="transition-colors" {...hoverProps}>
-            Home
-          </Link>
+        <Link
+          to="/wishlist"
+          className="flex items-center gap-2 px-4 py-2 bg-[#1B1625] text-sm text-gray-200 rounded-full border border-[#2A233A] hover:bg-[#231C30] focus:outline-none focus:ring-1 focus:ring-purple-500"
+        >
+          <Heart size={16} />
+        </Link>
 
-          <Link to="/products" style={linkStyle} className="transition-colors" {...hoverProps}>
-            Products
-          </Link>
+        <Link
+          to="/cart"
+          className="flex items-center gap-2 px-4 py-2 bg-[#1B1625] text-sm text-gray-200 rounded-full border border-[#2A233A] hover:bg-[#231C30] focus:outline-none focus:ring-1 focus:ring-purple-500"
+        >
+          <ShoppingCart size={16} />
+        </Link>
 
-          {/* Cart */}
-          <Link to="/cart" aria-label="Cart" className="relative">
-            <ShoppingCart size={20} style={{ color: colors.navText }} />
-            {cartCount > 0 && (
-              <span
-                className="absolute -top-2 -right-2 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center"
-                style={{ background: colors.violet, color: "#fff" }}
-              >
-                {cartCount}
-              </span>
-            )}
-          </Link>
-
-          {/* Sign In */}
-          <button
-            onClick={onOpenSignIn}
-            className="px-4 py-1.5 rounded-md text-sm font-semibold text-white transition-opacity hover:opacity-90"
-            style={{ background: colors.violet }}
-          >
-            Sign In
-          </button>
-        </div>
+        <Link
+          to="/signup"
+          className="flex items-center gap-2 px-4 py-2 bg-[#1B1625] text-sm text-gray-200 rounded-full border border-[#2A233A] hover:bg-[#231C30] focus:outline-none focus:ring-1 focus:ring-purple-500"
+        >
+          <User size={16} />
+        </Link>
       </div>
     </nav>
   );
