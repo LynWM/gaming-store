@@ -1,26 +1,27 @@
-import React from 'react'
-import {BrowserRouter, Route, Router, Routes} from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Navbar from './layouts/navbar'
-import Footer from './layouts/footer'
-import Homepage from './pages/customer/homepage'
-import Signup from './layouts/signup'
-import Login from './layouts/login'
+import CustomerLayout from "./layouts/customerLayout";
+import AdminLayout from "./layouts/adminLayout";
 
-export default function App() {
+import Home from "./pages/customer/homepage";
+import SignUp from "./layouts/signup";
+
+function App() {
   return (
     <BrowserRouter>
-      <Navbar />
-        <main className='min-h-screen'>
-          {/* Routes */}
-          <Routes>
-            <Route path="/" element={<Homepage /> } />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
-          </Routes>
-          
-        </main>
-      <Footer />
+      <Routes>
+        {/* Customer pages */}
+        <Route element={<CustomerLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/signup" element={<SignUp />} />
+        </Route>
+
+        {/* Admin pages */}
+        <Route path="/admin" element={<AdminLayout />}>
+        </Route>
+      </Routes>
     </BrowserRouter>
-  )
+  );
 }
+
+export default App;
