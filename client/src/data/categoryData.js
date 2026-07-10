@@ -8,9 +8,6 @@ import {
   Trophy
 } from "lucide-react";
 
-// Shared accent tokens — pulled straight from the homepage category tiles
-// so every category page feels like part of the same store, not a generic
-// purple-600 template.
 const ACCENTS = {
   consoles:     { hex: "#A855F7", from: "#3B1E63", via: "#20123A", rgb: "168,85,247" },
   games:        { hex: "#3B82F6", from: "#1E2F63", via: "#12193A", rgb: "59,130,246" },
@@ -33,8 +30,6 @@ const names = {
   tournaments: ["Valorant Open Qualifier", "Smash Ultimate Regional", "Rocket League 3v3", "FIFA Ultimate Cup", "CS2 Community Clash", "Apex Legends Trios", "Street Fighter 6 Showdown", "Fortnite Duos Cup"]
 };
 
-// Button copy per category — everything defaults to "Add to Cart" unless
-// overridden here, so new categories don't need to think about this.
 const CTA_LABELS = {
   services: "Book Now",
   tournaments: "Sign Up Now"
