@@ -56,5 +56,14 @@ products = [
         "description": "Portable gaming console with a vibrant 7-inch OLED display.",
         "price": 45999,
         "image": "client/src/assets/images/nintendo.webp"
+    },
+    {
+        "id": 6,
+        "name":"god of war",
+        "category": "games",
+        "subtitle": "White Joy-Con Edition",
+        "description": "Portable gaming console with a vibrant 7-inch OLED display.",
+        "price": 45999,
+        "image": "client/src/assets/images/nintendo.webp"
     }
 ]

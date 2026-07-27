@@ -6,6 +6,7 @@ import AdminLayout from "./layouts/adminLayout";
 
 import Homepage from './pages/customer/homepage'
 import CategoryPage from './pages/customer/CategoryPage'
+import SearchResults from './pages/customer/SearchResults'
 import Signup from './layouts/signup'
 import Login from './layouts/login'
 
@@ -19,6 +20,7 @@ function App() {
             {/* Customer pages */}
             <Route element={<CustomerLayout />}>
               <Route path="/" element={< Homepage />} />
+              <Route path="/search" element={<SearchResults />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/login" element={<Login />} />
               <Route path="/:slug" element={<CategoryPage />} />
