@@ -14,9 +14,9 @@ export function AuthProvider({ children }) {
     );
     if (found) {
       setUser(found);
-      return true;
+      return found;
     }
-    return false;
+    return null;
   };
 
   const signup = ({ firstName, lastName, username, email, password }) => {
@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
 
     setUsers((prev) => [...prev, newUser]);
     setUser(newUser);
-    return { success: true };
+    return { success: true , user: newUser};
   };
 
   const logout = () => setUser(null);

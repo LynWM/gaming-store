@@ -15,7 +15,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-[#110D1A] h-16 flex items-center px-6 border-b border-[#231C30] justify-between gap-4">
-      {/* Two-tone logo */}
+      {/* logo */}
       <Link to="/" className="text-xl font-black tracking-wider uppercase shrink-0 cursor-pointer">
         <span className="text-white">NEX</span>
         <span className="text-purple-500">PLAY</span>
@@ -33,7 +33,7 @@ export default function Navbar() {
         />
       </form>
 
-      {/* Icon nav */}
+      {/* Nav */}
       <div className="flex items-center gap-4">
         <Link
           to="/"
