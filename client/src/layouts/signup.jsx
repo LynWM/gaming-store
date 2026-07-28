@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Gamepad2, Eye, EyeOff, Lock } from 'lucide-react'
+import { useState } from 'react'
+import { Eye, EyeOff, Lock } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/authContext'
 
