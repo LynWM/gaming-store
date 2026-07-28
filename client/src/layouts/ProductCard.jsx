@@ -1,5 +1,6 @@
-import React, { useState } from "react";
 import { Heart, ShoppingCart, Star, Calendar, UserPlus } from "lucide-react";
+import { useCart } from "../context/cartContext";
+import { useWishlist } from "../context/wishlistContext";
 
 const CTA_ICONS = {
   "Book Now": Calendar,
@@ -7,7 +8,9 @@ const CTA_ICONS = {
 };
 
 export default function ProductCard({ product }) {
-  const [saved, setSaved] = useState(false);
+  const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+  const saved = isInWishlist(product.id);
   const { name, price, oldPrice, rating, reviews, tag, accent, ctaLabel = "Add to Cart" } = product;
   const CtaIcon = CTA_ICONS[ctaLabel] || ShoppingCart;
 
@@ -23,7 +26,7 @@ export default function ProductCard({ product }) {
       style={{ ["--accent"]: accent.hex }}
     >
       <button
-        onClick={() => setSaved((s) => !s)}
+        onClick={() => toggleWishlist(product)}
         aria-label={saved ? "Remove from wishlist" : "Save to wishlist"}
         className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-black/40 backdrop-blur flex items-center justify-center transition-colors hover:bg-black/60"
       >
@@ -71,6 +74,7 @@ export default function ProductCard({ product }) {
         </div>
 
         <button
+          onClick={() => addToCart(product)}
           className="mt-2 w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
           style={{ backgroundColor: accent.hex }}
         >
