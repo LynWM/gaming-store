@@ -1,9 +1,7 @@
-import React from 'react'
 import {
   Gamepad2,
   Heart,
   ShoppingCart,
-  User,
   Monitor,
   Laptop,
   Grid,
@@ -13,6 +11,8 @@ import {
   ArrowRight,
   Star
 } from 'lucide-react'
+import { useCart } from '../../context/cartContext'
+import { useWishlist } from '../../context/wishlistContext'
 
 const CATEGORIES = [
   { name: 'Consoles', slug: 'consoles', icon: Gamepad2, color: 'text-[#A855F7]', bg: 'bg-[#A855F7]/15', border: 'hover:border-[#A855F7]' },
@@ -47,6 +47,9 @@ const BADGE_STYLES = {
 }
 
 export default function Homepage() {
+  const { addToCart } = useCart();
+  const { toggleWishlist } = useWishlist();
+
   return (
     <div className='min-h-screen bg-[#0B0712] text-white font-sans antialiased select-none'>
 
@@ -147,6 +150,7 @@ export default function Homepage() {
                   </div>
                   <button
                     type="button"
+                    onClick={() => toggleWishlist(product)}
                     className='absolute bottom-3 right-3 w-9 h-9 rounded-full bg-black/50 border border-white/10 flex items-center justify-center text-white/80 hover:text-[#FB7185] hover:border-[#F43F5E]/40 backdrop-blur-sm'
                   >
                     <Heart size={15} />
@@ -181,6 +185,7 @@ export default function Homepage() {
 
                   <button
                     type="button"
+                    onClick={() => addToCart(product)}
                     className='mt-4 w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#7C3AED] hover:bg-[#6D28D9] text-sm font-bold text-white'
                   >
                     <ShoppingCart size={15} /> Add To Cart
