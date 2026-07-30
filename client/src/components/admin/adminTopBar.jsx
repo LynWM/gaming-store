@@ -1,6 +1,18 @@
 import { Link } from 'react-router-dom';
 
 export default function AdminTopBar() {
+
+  const {user, logout} = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const heading = pageTitles[location.pathname] || "Admin";
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <header className="border-b border-[#231C30] bg-[#110D1A] px-6 py-4">
       <div className="flex items-center justify-between">

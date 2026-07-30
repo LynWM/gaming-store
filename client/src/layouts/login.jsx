@@ -168,7 +168,7 @@ export default function Login() {
             type="submit"
             className="w-full bg-[#9d4edd] hover:bg-[#b57cff] text-white font-semibold text-sm rounded-xl py-3 px-4 flex items-center justify-center gap-2 shadow-lg shadow-[#9d4edd]/20 transform active:scale-[0.99] transition-all duration-150 group mt-2"
           >
-            <span>Sign In</span>
+            <span>Log In</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </button>
         </form>
