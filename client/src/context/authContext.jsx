@@ -1,48 +1,78 @@
 import { createContext, useContext, useState } from "react";
-import { mockUsers } from "../data/mockUsers";
+import { api } from "../services/api";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  
-  const [users, setUsers] = useState(mockUsers);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const raw = localStorage.getItem("nextplay-user");
+    return raw ? JSON.parse(raw) : null;
+  });
+  const [message, setMessage] = useState("");
 
-  const login = (email, password) => {
-    const found = users.find(
-      (u) => u.email === email && u.password === password
-    );
-    if (found) {
-      setUser(found);
-      return found;
+  const login = async (email, password) => {
+    try {
+      const result = await api.login({ email, password });
+      if (result.success) {
+        setUser(result.user);
+        localStorage.setItem("nextplay-user", JSON.stringify(result.user));
+        return { success: true };
+      }
+      return { success: false, error: result.error || "Invalid credentials" };
+    } catch (error) {
+      return { success: false, error: error.message };
     }
-    return null;
   };
 
-  const signup = ({ firstName, lastName, username, email, password }) => {
-    const existing = users.find((u) => u.email === email);
-    if (existing) {
-      return { success: false, error: "An account with this email already exists" };
+  const signup = async ({ firstName, lastName, username, email, password }) => {
+    try {
+      const result = await api.signup({ firstName, lastName, username, email, password });
+      if (result.success) {
+        setUser(result.user);
+        localStorage.setItem("nextplay-user", JSON.stringify(result.user));
+        setMessage(`Verification code sent to ${email}`);
+        return { success: true, code: result.code };
+      }
+      return { success: false, error: result.error || "Signup failed" };
+    } catch (error) {
+      return { success: false, error: error.message };
     }
-
-    const newUser = {
-      id: users.length + 1,
-      name: `${firstName} ${lastName}`,
-      username,
-      email,
-      password,
-      role: "customer",
-    };
-
-    setUsers((prev) => [...prev, newUser]);
-    setUser(newUser);
-    return { success: true , user: newUser};
   };
 
-  const logout = () => setUser(null);
+  const verifyCode = async (email, code) => {
+    try {
+      const result = await api.verifyCode({ email, code });
+      return result;
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
+  const forgotPassword = async (email) => {
+    try {
+      const result = await api.forgotPassword({ email });
+      return result;
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
+  const resetPassword = async (email, code, password) => {
+    try {
+      const result = await api.resetPassword({ email, code, password });
+      return result;
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("nextplay-user");
+  };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, verifyCode, forgotPassword, resetPassword, message }}>
       {children}
     </AuthContext.Provider>
   );

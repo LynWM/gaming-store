@@ -1,9 +1,22 @@
-import { Link } from "react-router-dom";
-import { Gamepad2, Heart, ShoppingCart, User } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Gamepad2, Heart, ShoppingCart, User, Search } from "lucide-react";
 import { useCart } from "../../context/cartContext";
+import { useAuth } from "../../context/authContext";
 
 export default function Navbar() {
   const { totalItems } = useCart();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    const value = query.trim();
+    if (value) {
+      navigate(`/${value.toLowerCase().replace(/\s+/g, '-')}`);
+    }
+  };
 
   return (
     <nav className="bg-[#110D1A] h-16 flex items-center px-6 border-b border-[#231C30] justify-between gap-4">
@@ -13,13 +26,18 @@ export default function Navbar() {
         <span className="text-purple-500">PLAY</span>
       </Link>
 
-      <div className="w-full max-w-md">
-        <input
-          type="text"
-          className="w-full h-10 px-4 bg-[#1B1625] text-sm text-gray-200 placeholder-gray-500 rounded-full border border-[#2A233A] focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-          placeholder="Search games, hardware, etc..."
-        />
-      </div>
+      <form onSubmit={handleSearch} className="w-full max-w-md">
+        <div className="relative">
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full h-10 pl-10 pr-4 bg-[#1B1625] text-sm text-gray-200 placeholder-gray-500 rounded-full border border-[#2A233A] focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+            placeholder="Search games, hardware, accounts..."
+          />
+        </div>
+      </form>
 
       {/* Nav */}
       <div className="flex items-center gap-4">
@@ -49,12 +67,21 @@ export default function Navbar() {
           )}
         </Link>
 
-        <Link
-          to="/signup"
-          className="flex items-center gap-2 px-4 py-2 bg-[#1B1625] text-sm text-gray-200 rounded-full border border-[#2A233A] hover:bg-[#231C30] focus:outline-none focus:ring-1 focus:ring-purple-500"
-        >
-          <User size={16} />
-        </Link>
+        {user ? (
+          <button
+            onClick={logout}
+            className="flex items-center gap-2 px-4 py-2 bg-[#1B1625] text-sm text-gray-200 rounded-full border border-[#2A233A] hover:bg-[#231C30]"
+          >
+            <User size={16} /> {user.first_name}
+          </button>
+        ) : (
+          <Link
+            to="/signup"
+            className="flex items-center gap-2 px-4 py-2 bg-[#1B1625] text-sm text-gray-200 rounded-full border border-[#2A233A] hover:bg-[#231C30] focus:outline-none focus:ring-1 focus:ring-purple-500"
+          >
+            <User size={16} />
+          </Link>
+        )}
       </div>
     </nav>
   );

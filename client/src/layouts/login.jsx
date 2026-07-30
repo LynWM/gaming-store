@@ -1,24 +1,54 @@
 import { useState } from 'react';
-import { Gamepad2, Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
+import { Gamepad2, Eye, EyeOff, Mail, Lock, ArrowRight, KeyRound, CheckCircle2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
 
 export default function Login() {
-  const { login } = useAuth();
+  const { login, forgotPassword, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [resetVisible, setResetVisible] = useState(false);
+  const [resetCode, setResetCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const loggedInUser = login(formData.email, formData.password);
+    const result = await login(formData.email, formData.password);
 
-    if (loggedInUser) {
-      navigate(loggedInUser.role === 'admin' ? '/admin' : '/');
+    if (result.success) {
+      navigate('/');
     } else {
-      setError('Invalid email or password');
+      setError(result.error || 'Invalid email or password');
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!formData.email) {
+      setError('Enter your email to receive a reset code');
+      return;
+    }
+    const result = await forgotPassword(formData.email);
+    if (result.success) {
+      setSuccess(`Reset code sent to ${formData.email}`);
+      setResetVisible(true);
+    } else {
+      setError(result.error || 'Unable to send reset code');
+    }
+  };
+
+  const handleResetPassword = async () => {
+    const result = await resetPassword(formData.email, resetCode, newPassword);
+    if (result.success) {
+      setSuccess('Password reset successfully');
+      setResetVisible(false);
+      setResetCode('');
+      setNewPassword('');
+    } else {
+      setError(result.error || 'Unable to reset password');
     }
   };
 
@@ -65,9 +95,9 @@ export default function Login() {
               <label className="block text-xs font-semibold uppercase tracking-wider text-[#8c92b2]">
                 Password
               </label>
-              <a href="#forgot" className="text-xs font-medium text-[#9d4edd] hover:underline hover:text-[#b57cff] transition-all">
+              <button type="button" onClick={handleForgotPassword} className="text-xs font-medium text-[#9d4edd] hover:underline hover:text-[#b57cff] transition-all">
                 Forgot password?
-              </a>
+              </button>
             </div>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#535975]">
@@ -93,6 +123,34 @@ export default function Login() {
 
           {error && (
             <p className="text-sm text-red-400 text-center">{error}</p>
+          )}
+          {success && (
+            <p className="text-sm text-emerald-400 text-center">{success}</p>
+          )}
+
+          {resetVisible && (
+            <div className="rounded-xl border border-[#2a2f4a] bg-[#171a2b] p-4 space-y-3">
+              <div className="flex items-center gap-2 text-sm text-[#b57cff]">
+                <KeyRound size={16} /> Enter the reset code and a new password
+              </div>
+              <input
+                type="text"
+                placeholder="Reset code"
+                className="w-full bg-[#1c1f30] text-white placeholder-[#535975] text-sm rounded-xl px-4 py-3 border border-[#2a2f4a]"
+                value={resetCode}
+                onChange={(e) => setResetCode(e.target.value)}
+              />
+              <input
+                type="password"
+                placeholder="New password"
+                className="w-full bg-[#1c1f30] text-white placeholder-[#535975] text-sm rounded-xl px-4 py-3 border border-[#2a2f4a]"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              <button type="button" onClick={handleResetPassword} className="w-full rounded-xl bg-[#7C3AED] px-3 py-2 text-sm font-semibold text-white">
+                Reset password
+              </button>
+            </div>
           )}
 
           <div className="flex items-center">

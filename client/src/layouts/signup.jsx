@@ -1,14 +1,17 @@
 import { useState } from 'react'
-import { Eye, EyeOff, Lock } from 'lucide-react'
+import { Eye, EyeOff, Lock, KeyRound, CheckCircle2 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/authContext'
 
 export default function Signup() {
-  const { signup } = useAuth()
+  const { signup, verifyCode } = useAuth()
   const navigate = useNavigate()
 
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [code, setCode] = useState('')
+  const [verified, setVerified] = useState(false)
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -22,14 +25,26 @@ export default function Signup() {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    const result = signup(formData)
+    const result = await signup(formData)
 
     if (result.success) {
-      navigate('/')
+      setSuccess(`Verification code sent to ${formData.email}`)
+      setVerified(false)
     } else {
       setError(result.error)
+    }
+  }
+
+  const handleVerify = async () => {
+    const result = await verifyCode(formData.email, code)
+    if (result.success) {
+      setVerified(true)
+      setSuccess('Email verified successfully')
+      navigate('/')
+    } else {
+      setError(result.error || 'Invalid verification code')
     }
   }
 
@@ -138,6 +153,25 @@ export default function Signup() {
 
           {error && (
             <p className='text-sm text-red-400 text-center'>{error}</p>
+          )}
+          {success && (
+            <p className='text-sm text-emerald-400 text-center'>{success}</p>
+          )}
+
+          {!verified && (
+            <div className='rounded-xl border border-[#2a2f4a] bg-[#171a2b] p-4 space-y-3'>
+              <div className='flex items-center gap-2 text-sm text-[#b57cff]'>
+                <KeyRound size={16} /> Enter the verification code sent to your inbox
+              </div>
+              <input
+                type='text'
+                placeholder='Verification code'
+                className='w-full bg-[#1F2330] text-sm text-gray-200 rounded-lg border border-gray-700 px-4 py-3'
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+              />
+              <button type='button' onClick={handleVerify} className='w-full rounded-lg bg-[#7C3AED] px-3 py-2 text-sm font-semibold text-white'>Verify email</button>
+            </div>
           )}
 
           <button 
