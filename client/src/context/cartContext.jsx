@@ -1,9 +1,19 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, useEffect } from "react";
+import { api } from "../services/api";
+import { useAuth } from "./authContext";
 
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
+  const { user } = useAuth();
   const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    api.getCart(user.id).then((data) => {
+      setItems((data || []).map((item) => ({ ...item, id: item.product_id, cartId: item.cart_id })));
+    }).catch(() => {});
+  }, [user?.id]);
 
   const addToCart = useCallback((product) => {
     setItems((prev) => {
@@ -19,9 +29,15 @@ export function CartProvider({ children }) {
     });
   }, []);
 
-  const removeFromCart = useCallback((productId) => {
+  const removeFromCart = useCallback(async (productId) => {
+    if (user?.id) {
+      const target = items.find((item) => item.id === productId);
+      if (target?.cartId) {
+        await api.removeFromCart(user.id, target.cartId);
+      }
+    }
     setItems((prev) => prev.filter((item) => item.id !== productId));
-  }, []);
+  }, [items, user?.id]);
 
   const updateQuantity = useCallback((productId, quantity) => {
     if (quantity <= 0) {

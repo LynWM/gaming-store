@@ -12,6 +12,7 @@ import Signup from './layouts/signup'
 import Login from './layouts/login'
 import CartPage from './pages/customer/CartPage'
 import WishlistPage from './pages/customer/WishlistPage'
+import AdminDashboard from './pages/admin/AdminDashboard'
 
 
 function App() {
@@ -34,6 +35,10 @@ function App() {
 
            {/* Admin pages */}
            <Route path="/admin" element={<AdminLayout />}>
+             <Route index element={<AdminDashboard />} />
+             <Route path="products" element={<AdminDashboard />} />
+             <Route path="users" element={<AdminDashboard />} />
+             <Route path="orders" element={<AdminDashboard />} />
            </Route>
          </Routes>
        </BrowserRouter>
