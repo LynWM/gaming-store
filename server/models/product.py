@@ -28,4 +28,5 @@ class Product(db.Model):
             "image": self.image,
             "category_id": self.category_id,
             "category": self.category.name if self.category else None,
+            "category_slug": self.category.slug if self.category else None,
         }
