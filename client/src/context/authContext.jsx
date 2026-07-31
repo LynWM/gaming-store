@@ -4,75 +4,40 @@ import { api } from "../services/api";
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    const raw = localStorage.getItem("nextplay-user");
-    return raw ? JSON.parse(raw) : null;
-  });
-  const [message, setMessage] = useState("");
+  const [user, setUser] = useState(null); // null = logged out
 
+  // Returns the logged-in user object on success, or null on failure
   const login = async (email, password) => {
     try {
-      const result = await api.login({ email, password });
-      if (result.success) {
-        setUser(result.user);
-        localStorage.setItem("nextplay-user", JSON.stringify(result.user));
-        return { success: true };
+      const res = await api.login({ email, password });
+      if (res.success) {
+        setUser(res.user);
+        return res.user;
       }
-      return { success: false, error: result.error || "Invalid credentials" };
-    } catch (error) {
-      return { success: false, error: error.message };
+      return null;
+    } catch (err) {
+      return null;
     }
   };
 
+  // Returns { success: true, user } or { success: false, error: "..." }
   const signup = async ({ firstName, lastName, username, email, password }) => {
     try {
-      const result = await api.signup({ firstName, lastName, username, email, password });
-      if (result.success) {
-        setUser(result.user);
-        localStorage.setItem("nextplay-user", JSON.stringify(result.user));
-        setMessage(`Verification code sent to ${email}`);
-        return { success: true, code: result.code };
+      const res = await api.signup({ firstName, lastName, username, email, password });
+      if (res.success) {
+        setUser(res.user);
+        return { success: true, user: res.user };
       }
-      return { success: false, error: result.error || "Signup failed" };
-    } catch (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: res.error || "Signup failed" };
+    } catch (err) {
+      return { success: false, error: err.message || "Signup failed" };
     }
   };
 
-  const verifyCode = async (email, code) => {
-    try {
-      const result = await api.verifyCode({ email, code });
-      return result;
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  };
-
-  const forgotPassword = async (email) => {
-    try {
-      const result = await api.forgotPassword({ email });
-      return result;
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  };
-
-  const resetPassword = async (email, code, password) => {
-    try {
-      const result = await api.resetPassword({ email, code, password });
-      return result;
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("nextplay-user");
-  };
+  const logout = () => setUser(null);
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, verifyCode, forgotPassword, resetPassword, message }}>
+    <AuthContext.Provider value={{ user, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );

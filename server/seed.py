@@ -84,7 +84,7 @@ with app.app_context():
             product_id=products_by_name[name].id,
             discount_percent=discount,
             starts_at=now,
-            ends_at=now + timedelta(hours=4, minutes=30 - i, seconds=17),
+            ends_at=now + timedelta(days=7, minutes=30 - i, seconds=17),
             is_active=True,
         )
         db.session.add(deal)

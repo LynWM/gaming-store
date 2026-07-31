@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ChevronRight, SlidersHorizontal } from "lucide-react";
 
 import ProductCard from "../../layouts/ProductCard";
-import { categories } from "../../data/categoryData";
+import { categoryMeta } from "../../data/categoryData";
+import { api } from "../../services/api";
 
 const SORTS = [
   { id: "featured", label: "Featured" },
@@ -14,12 +15,62 @@ const SORTS = [
 
 export default function CategoryPage() {
   const { slug } = useParams();
-  const category = categories[slug];
+  const meta = categoryMeta[slug];
   const [sort, setSort] = useState("featured");
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!meta) {
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+
+    Promise.all([api.getProducts(slug), api.getDeals()])
+      .then(([apiProducts, deals]) => {
+        if (cancelled) return;
+
+        // Match each product against active deals by product_id to get oldPrice/discounted price
+        const dealsByProductId = new Map(deals.map((deal) => [deal.product_id, deal]));
+
+        const merged = apiProducts.map((product) => {
+          const deal = dealsByProductId.get(product.id);
+          return {
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            image: product.image,
+            price: deal ? deal.price : product.price,
+            oldPrice: deal ? deal.oldPrice : null,
+            rating: product.rating || 5,
+            reviews: product.reviews || 0,
+            tag: deal ? "Sale" : null,
+            accent: meta.accent,
+            ctaLabel: meta.ctaLabel
+          };
+        });
+
+        setProducts(merged);
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err.message || "Failed to load products");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [slug, meta]);
 
   const sortedProducts = useMemo(() => {
-    if (!category) return [];
-    const list = [...category.products];
+    const list = [...products];
     switch (sort) {
       case "price-asc":
         return list.sort((a, b) => a.price - b.price);
@@ -30,9 +81,9 @@ export default function CategoryPage() {
       default:
         return list;
     }
-  }, [category, sort]);
+  }, [products, sort]);
 
-  if (!category) {
+  if (!meta) {
     return (
       <div className="min-h-screen bg-[#0B0712] text-white flex flex-col items-center justify-center gap-3">
         <p className="text-lg font-semibold">Category not found</p>
@@ -49,8 +100,8 @@ export default function CategoryPage() {
     );
   }
 
-  const Icon = category.icon;
-  const { hex, from, via } = category.accent;
+  const Icon = meta.icon;
+  const { hex, from, via } = meta.accent;
 
   return (
     <div className="min-h-screen bg-[#0B0712] text-white font-sans antialiased">
@@ -58,7 +109,7 @@ export default function CategoryPage() {
         <nav className="flex items-center gap-1.5 text-xs font-medium text-[#6B6478]">
           <Link to="/" className="hover:text-white transition-colors">Home</Link>
           <ChevronRight size={12} />
-          <span className="text-[#9C97A8]">{category.title}</span>
+          <span className="text-[#9C97A8]">{meta.title}</span>
         </nav>
 
         <section
@@ -83,10 +134,10 @@ export default function CategoryPage() {
 
               <div>
                 <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight">
-                  {category.title}
+                  {meta.title}
                 </h1>
                 <p className="mt-2 text-sm text-[#C9C4D6] font-medium">
-                  {category.description} · {category.products.length} products
+                  {meta.description} · {products.length} products
                 </p>
               </div>
             </div>
@@ -113,11 +164,21 @@ export default function CategoryPage() {
           </div>
         </section>
 
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {sortedProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </section>
+        {loading && (
+          <p className="text-sm text-[#9C97A8]">Loading products…</p>
+        )}
+
+        {error && (
+          <p className="text-sm text-[#F87171]">Couldn't load products: {error}</p>
+        )}
+
+        {!loading && !error && (
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {sortedProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </section>
+        )}
       </main>
     </div>
   );

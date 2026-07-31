@@ -1,12 +1,20 @@
 from flask import Blueprint, jsonify, request
-from models import Product, db
+from models import Category, Product, db
 
 product_bp = Blueprint("products", __name__, url_prefix="/api/products")
 
 
 @product_bp.route("", methods=["GET"])
 def list_products():
-    products = Product.query.order_by(Product.id.desc()).all()
+    query = Product.query
+    category_slug = request.args.get("category")
+    if category_slug:
+        category = Category.query.filter_by(slug=category_slug).first()
+        if category:
+            query = query.filter_by(category_id=category.id)
+        else:
+            return jsonify([])  # unknown category slug — no matches
+    products = query.order_by(Product.id.desc()).all()
     return jsonify([p.to_dict() for p in products])
 
 
