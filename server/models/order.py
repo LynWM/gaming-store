@@ -18,6 +18,11 @@ class Order(db.Model):
         return {
             "id": self.id,
             "user_id": self.user_id,
+            "user": {
+                "first_name": self.user.first_name,
+                "last_name": self.user.last_name,
+                "email": self.user.email,
+            } if self.user else None,
             "total": self.total,
             "status": self.status,
             "items": [item.to_dict() for item in self.items],
