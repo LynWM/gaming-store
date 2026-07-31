@@ -1,4 +1,6 @@
 from flask import Blueprint, jsonify, request
+from sqlalchemy import or_
+
 from models import Category, Product, db
 
 product_bp = Blueprint("products", __name__, url_prefix="/api/products")
@@ -14,6 +16,14 @@ def list_products():
             query = query.filter_by(category_id=category.id)
         else:
             return jsonify([])  # unknown category slug — no matches
+
+    search_term = request.args.get("q", "").strip()
+    if search_term:
+        like = f"%{search_term}%"
+        query = query.filter(
+            or_(Product.name.ilike(like), Product.description.ilike(like))
+        )
+
     products = query.order_by(Product.id.desc()).all()
     return jsonify([p.to_dict() for p in products])
 

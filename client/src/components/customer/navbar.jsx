@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Gamepad2, Heart, ShoppingCart, User, Search } from "lucide-react";
+import { Gamepad2, Heart, ShoppingCart, User, Search, LogOut, ChevronDown } from "lucide-react";
 import { useCart } from "../../context/cartContext";
 import { useAuth } from "../../context/authContext";
 
@@ -9,12 +9,30 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
+
+  const handleLogout = () => {
+    setMenuOpen(false);
+    logout();
+  };
 
   const handleSearch = (event) => {
     event.preventDefault();
     const value = query.trim();
     if (value) {
-      navigate(`/${value.toLowerCase().replace(/\s+/g, '-')}`);
+      navigate(`/search?q=${encodeURIComponent(value)}`);
     }
   };
 
@@ -68,12 +86,34 @@ export default function Navbar() {
         </Link>
 
         {user ? (
-          <button
-            onClick={logout}
-            className="flex items-center gap-2 px-4 py-2 bg-[#1B1625] text-sm text-gray-200 rounded-full border border-[#2A233A] hover:bg-[#231C30]"
-          >
-            <User size={16} /> {user.first_name}
-          </button>
+          <div className="relative" ref={menuRef}>
+            <button
+              onClick={() => setMenuOpen((open) => !open)}
+              aria-haspopup="true"
+              aria-expanded={menuOpen}
+              className="flex items-center gap-2 px-4 py-2 bg-[#1B1625] text-sm text-gray-200 rounded-full border border-[#2A233A] hover:bg-[#231C30] focus:outline-none focus:ring-1 focus:ring-purple-500"
+            >
+              <User size={16} /> {user.first_name}
+              <ChevronDown size={14} className={`transition-transform ${menuOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {menuOpen && (
+              <div className="absolute right-0 mt-2 w-52 bg-[#1B1625] border border-[#2A233A] rounded-xl shadow-xl py-2 z-50">
+                <div className="px-4 py-2 border-b border-[#2A233A]">
+                  <p className="text-sm font-semibold text-white truncate">
+                    {user.first_name} {user.last_name}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-200 hover:bg-[#231C30] hover:text-[#F87171] transition-colors"
+                >
+                  <LogOut size={15} /> Log out
+                </button>
+              </div>
+            )}
+          </div>
         ) : (
           <Link
             to="/signup"

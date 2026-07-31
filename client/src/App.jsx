@@ -14,6 +14,7 @@ import CartPage from './pages/customer/CartPage'
 import WishlistPage from './pages/customer/WishlistPage'
 import FlashDealsPage from './pages/customer/FlashDealDetailPage'
 import ProductDetailPage from './pages/customer/ProductDetailPage'
+import SearchResultsPage from './pages/customer/SearchResultsPage'
 import AdminDashboard from './pages/admin/AdminDashboard'
 
 
@@ -32,6 +33,7 @@ function App() {
                <Route path="/login" element={<Login />} />
                <Route path="/flash-deals" element={<FlashDealsPage />} />
                <Route path="/products/:productId" element={<ProductDetailPage />} />
+               <Route path="/search" element={<SearchResultsPage />} />
                <Route path="/:slug" element={<CategoryPage />} />
                <Route path="/cart" element={<CartPage />} />
                <Route path="/wishlist" element={<WishlistPage />} />

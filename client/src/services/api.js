@@ -19,6 +19,7 @@ export const api = {
   forgotPassword: (data) => request('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify(data) }),
   resetPassword: (data) => request('/api/auth/reset-password', { method: 'POST', body: JSON.stringify(data) }),
   getProducts: (category) => request(category ? `/api/products?category=${category}` : '/api/products'),
+  searchProducts: (q) => request(`/api/products?q=${encodeURIComponent(q)}`),
   getProduct: (id) => request(`/api/products/${id}`),
   getDeals: () => request('/api/deals'),
   createProduct: (data) => request('/api/products', { method: 'POST', body: JSON.stringify(data) }),
