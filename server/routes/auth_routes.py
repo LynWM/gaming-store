@@ -1,71 +1,86 @@
-from compat.flask import Blueprint
+from flask import Blueprint, jsonify, request
+from models import User, db
 
-auth_bp = Blueprint("auth", __name__)
+auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
 
-@auth_bp.route("/api/auth/signup", methods=["POST"])
+@auth_bp.route("/signup", methods=["POST"])
 def signup():
-    from app import DB, app, request
+    payload = request.get_json() or {}
+    email = payload.get("email")
+    password = payload.get("password")
 
-    payload = request.json or {}
-    if not payload.get("email") or not payload.get("password"):
-        return app.jsonify({"success": False, "error": "Email and password are required"}, 400)
-    if DB.get_user_by_email(payload["email"]):
-        return app.jsonify({"success": False, "error": "An account with this email already exists"}, 409)
-    user = DB.create_user(payload)
-    code = str(abs(hash(payload["email"])))[-6:]
-    DB.save_verification_code(payload["email"], code)
-    return app.jsonify({"success": True, "user": user, "code": code})
+    if not email or not password:
+        return jsonify({"success": False, "error": "Email and password are required"}), 400
+
+    if User.query.filter_by(email=email).first():
+        return jsonify({"success": False, "error": "An account with this email already exists"}), 409
+
+    user = User(
+        first_name=payload.get("firstName", ""),
+        last_name=payload.get("lastName", ""),
+        username=payload.get("username", ""),
+        email=email,
+        password=password,  # plain text ok for school project mock
+        role=payload.get("role", "customer"),
+    )
+    db.session.add(user)
+    db.session.commit()
+
+    return jsonify({"success": True, "user": user.to_dict()})
 
 
-@auth_bp.route("/api/auth/login", methods=["POST"])
+@auth_bp.route("/login", methods=["POST"])
 def login():
-    from app import DB, app, request
+    payload = request.get_json() or {}
+    email = payload.get("email")
+    password = payload.get("password")
 
-    payload = request.json or {}
-    user = DB.login(payload.get("email"), payload.get("password"))
+    user = User.query.filter_by(email=email, password=password).first()
     if not user:
-        return app.jsonify({"success": False, "error": "Invalid credentials"}, 401)
-    return app.jsonify({"success": True, "user": user})
+        return jsonify({"success": False, "error": "Invalid credentials"}), 401
+
+    return jsonify({"success": True, "user": user.to_dict()})
 
 
-@auth_bp.route("/api/auth/verify", methods=["POST"])
+# Simple in-memory code store — good enough for a demo, not for production
+_reset_codes = {}
+
+
+@auth_bp.route("/verify", methods=["POST"])
 def verify_code():
-    from app import DB, app, request
-
-    payload = request.json or {}
+    payload = request.get_json() or {}
     email = payload.get("email")
     code = payload.get("code")
-    if not email or not code:
-        return app.jsonify({"success": False, "error": "Email and code are required"}, 400)
-    return app.jsonify({"success": DB.verify_code(email, code)})
+    ok = _reset_codes.get(email) == code
+    return jsonify({"success": ok})
 
 
-@auth_bp.route("/api/auth/forgot-password", methods=["POST"])
+@auth_bp.route("/forgot-password", methods=["POST"])
 def forgot_password():
-    from app import DB, app, request
-
-    payload = request.json or {}
+    payload = request.get_json() or {}
     email = payload.get("email")
     if not email:
-        return app.jsonify({"success": False, "error": "Email is required"}, 400)
+        return jsonify({"success": False, "error": "Email is required"}), 400
     code = str(abs(hash(email)))[-6:]
-    DB.save_reset_code(email, code)
-    DB.save_verification_code(email, code)
-    return app.jsonify({"success": True, "message": "Reset code sent", "code": code})
+    _reset_codes[email] = code
+    return jsonify({"success": True, "message": "Reset code sent", "code": code})
 
 
-@auth_bp.route("/api/auth/reset-password", methods=["POST"])
+@auth_bp.route("/reset-password", methods=["POST"])
 def reset_password():
-    from app import DB, app, request
-
-    payload = request.json or {}
+    payload = request.get_json() or {}
     email = payload.get("email")
     code = payload.get("code")
     password = payload.get("password")
-    if not email or not code or not password:
-        return app.jsonify({"success": False, "error": "Email, code, and password are required"}, 400)
-    ok = DB.reset_password(email, code, password)
-    if not ok:
-        return app.jsonify({"success": False, "error": "Invalid reset code"}, 401)
-    return app.jsonify({"success": True, "message": "Password updated"})
+
+    if _reset_codes.get(email) != code:
+        return jsonify({"success": False, "error": "Invalid reset code"}), 401
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({"success": False, "error": "User not found"}), 404
+
+    user.password = password
+    db.session.commit()
+    return jsonify({"success": True, "message": "Password updated"})
