@@ -21,6 +21,7 @@ def create_app():
     CORS(app, resources={r"/*": {"origins": "*"}})
 
     from routes.auth_routes import auth_bp
+    from routes.category_route import category_bp
     from routes.deal_routes import deal_bp
     from routes.order_routes import order_bp
     from routes.product_routes import product_bp
@@ -31,6 +32,7 @@ def create_app():
     app.register_blueprint(user_bp)
     app.register_blueprint(order_bp)
     app.register_blueprint(deal_bp)
+    app.register_blueprint(category_bp)
 
     @app.route("/health", methods=["GET"])
     def health():
