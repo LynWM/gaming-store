@@ -115,9 +115,4 @@ npm run lint
 * Install dependencies before starting the development server.
 * If new packages are added, run `npm install` again to update the local environment.
 
-## License
 
-This project is intended for educational and development purposes.
-
-```
-```
