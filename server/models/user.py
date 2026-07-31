@@ -1,3 +1,5 @@
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from models.db import db
 
 
@@ -14,6 +16,12 @@ class User(db.Model):
 
     orders = db.relationship("Order", backref="user", cascade="all, delete-orphan")
     reviews = db.relationship("Review", backref="user", cascade="all, delete-orphan")
+
+    def set_password(self, raw_password):
+        self.password = generate_password_hash(raw_password)
+
+    def check_password(self, raw_password):
+        return check_password_hash(self.password, raw_password)
 
     def to_dict(self):
         return {

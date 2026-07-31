@@ -1,17 +1,16 @@
 import { useState } from 'react'
-import { Eye, EyeOff, Lock, KeyRound, CheckCircle2 } from 'lucide-react'
+import { Eye, EyeOff, Lock } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/authContext'
 
 export default function Signup() {
-  const { signup, verifyCode } = useAuth()
+  const { signup } = useAuth()
   const navigate = useNavigate()
 
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
-  const [code, setCode] = useState('')
-  const [verified, setVerified] = useState(false)
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -27,24 +26,20 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
+
+    if (formData.password !== confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+
     const result = await signup(formData)
 
     if (result.success) {
-      setSuccess(`Verification code sent to ${formData.email}`)
-      setVerified(false)
-    } else {
-      setError(result.error)
-    }
-  }
-
-  const handleVerify = async () => {
-    const result = await verifyCode(formData.email, code)
-    if (result.success) {
-      setVerified(true)
-      setSuccess('Email verified successfully')
+      setSuccess('Account created successfully')
       navigate('/')
     } else {
-      setError(result.error || 'Invalid verification code')
+      setError(result.error)
     }
   }
 
@@ -151,27 +146,32 @@ export default function Signup() {
             </div>
           </div>
 
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#8c92b2]">
+                Confirm Password
+              </label>
+            </div>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#535975]">
+                <Lock className="w-5 h-5" />
+              </span>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                placeholder="••••••••"
+                className="w-full bg-[#1c1f30] text-white placeholder-[#535975] text-sm rounded-xl pl-11 pr-11 py-3 border border-[#2a2f4a] focus:outline-none focus:border-[#9d4edd] focus:ring-1 focus:ring-[#9d4edd] transition-all duration-200"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
+          </div>
+
           {error && (
             <p className='text-sm text-red-400 text-center'>{error}</p>
           )}
           {success && (
             <p className='text-sm text-emerald-400 text-center'>{success}</p>
-          )}
-
-          {!verified && (
-            <div className='rounded-xl border border-[#2a2f4a] bg-[#171a2b] p-4 space-y-3'>
-              <div className='flex items-center gap-2 text-sm text-[#b57cff]'>
-                <KeyRound size={16} /> Enter the verification code sent to your inbox
-              </div>
-              <input
-                type='text'
-                placeholder='Verification code'
-                className='w-full bg-[#1F2330] text-sm text-gray-200 rounded-lg border border-gray-700 px-4 py-3'
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-              />
-              <button type='button' onClick={handleVerify} className='w-full rounded-lg bg-[#7C3AED] px-3 py-2 text-sm font-semibold text-white'>Verify email</button>
-            </div>
           )}
 
           <button 

@@ -11,7 +11,7 @@ export default function ProductCard({ product }) {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const saved = isInWishlist(product.id);
-  const { name, price, oldPrice, rating, reviews, tag, accent, ctaLabel = "Add to Cart" } = product;
+  const { name, image, price, oldPrice, rating, reviews, tag, accent, ctaLabel = "Add to Cart" } = product;
   const CtaIcon = CTA_ICONS[ctaLabel] || ShoppingCart;
 
   const tagStyles = {
@@ -49,14 +49,23 @@ export default function ProductCard({ product }) {
             {tag}
           </span>
         )}
-        <div
-          className="w-16 h-16 rounded-2xl border border-white/10 bg-white/5 group-hover:scale-110 transition-transform duration-300"
-          style={{ boxShadow: `0 0 30px rgba(${accent.rgb},0.25)` }}
-        />
+
+        {image ? (
+          <img
+            src={image}
+            alt={name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div
+            className="w-16 h-16 rounded-2xl border border-white/10 bg-white/5 group-hover:scale-110 transition-transform duration-300"
+            style={{ boxShadow: `0 0 30px rgba(${accent.rgb},0.25)` }}
+          />
+        )}
       </div>
 
       <div className="flex flex-col gap-2 p-4 flex-1">
-        <h3 className="text-sm font-semibold text-white leading-snug line-clamp-2 min-h-[2.5rem]">
+        <h3 className="text-sm font-semibold text-white leading-snug line-clamp-2 min-h-10">
           {name}
         </h3>
 

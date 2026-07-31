@@ -21,9 +21,9 @@ def signup():
         last_name=payload.get("lastName", ""),
         username=payload.get("username", ""),
         email=email,
-        password=password,  # plain text ok for school project mock
         role=payload.get("role", "customer"),
     )
+    user.set_password(password)
     db.session.add(user)
     db.session.commit()
 
@@ -36,8 +36,8 @@ def login():
     email = payload.get("email")
     password = payload.get("password")
 
-    user = User.query.filter_by(email=email, password=password).first()
-    if not user:
+    user = User.query.filter_by(email=email).first()
+    if not user or not user.check_password(password):
         return jsonify({"success": False, "error": "Invalid credentials"}), 401
 
     return jsonify({"success": True, "user": user.to_dict()})
@@ -45,15 +45,6 @@ def login():
 
 # Simple in-memory code store — good enough for a demo, not for production
 _reset_codes = {}
-
-
-@auth_bp.route("/verify", methods=["POST"])
-def verify_code():
-    payload = request.get_json() or {}
-    email = payload.get("email")
-    code = payload.get("code")
-    ok = _reset_codes.get(email) == code
-    return jsonify({"success": ok})
 
 
 @auth_bp.route("/forgot-password", methods=["POST"])
@@ -81,6 +72,6 @@ def reset_password():
     if not user:
         return jsonify({"success": False, "error": "User not found"}), 404
 
-    user.password = password
+    user.set_password(password)
     db.session.commit()
     return jsonify({"success": True, "message": "Password updated"})

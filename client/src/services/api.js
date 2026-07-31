@@ -16,7 +16,6 @@ export const api = {
   health: () => request('/health'),
   signup: (data) => request('/api/auth/signup', { method: 'POST', body: JSON.stringify(data) }),
   login: (data) => request('/api/auth/login', { method: 'POST', body: JSON.stringify(data) }),
-  verifyCode: (data) => request('/api/auth/verify', { method: 'POST', body: JSON.stringify(data) }),
   forgotPassword: (data) => request('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify(data) }),
   resetPassword: (data) => request('/api/auth/reset-password', { method: 'POST', body: JSON.stringify(data) }),
   getProducts: (category) => request(category ? `/api/products?category=${category}` : '/api/products'),

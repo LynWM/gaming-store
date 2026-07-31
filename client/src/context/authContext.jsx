@@ -6,17 +6,17 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null); // null = logged out
 
-  // Returns the logged-in user object on success, or null on failure
+  // Returns { success: true, user } or { success: false, error: "..." }
   const login = async (email, password) => {
     try {
       const res = await api.login({ email, password });
       if (res.success) {
         setUser(res.user);
-        return res.user;
+        return { success: true, user: res.user };
       }
-      return null;
+      return { success: false, error: res.error || 'Invalid email or password' };
     } catch (err) {
-      return null;
+      return { success: false, error: err.message || 'Invalid email or password' };
     }
   };
 
