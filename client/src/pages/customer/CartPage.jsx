@@ -66,7 +66,7 @@ export default function CartPage() {
                 </button>
               </div>
 
-              <div className="text-sm font-bold text-white min-w-[60px] text-right">
+              <div className="text-sm font-bold text-white min-w-15 text-right">
                 KSH {item.price * item.quantity}
               </div>
 

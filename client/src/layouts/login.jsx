@@ -16,15 +16,19 @@ export default function Login() {
   const [newPassword, setNewPassword] = useState('');
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const result = await login(formData.email, formData.password);
+  e.preventDefault();
+  const result = await login(formData.email, formData.password);
 
-    if (result.success) {
-      navigate('/');
+  if (result.success) {
+    if (result.user.role === "admin") {
+      navigate('/admin');
     } else {
-      setError(result.error || 'Invalid email or password');
+      navigate('/');
     }
-  };
+  } else {
+    setError(result.error || 'Invalid email or password');
+  }
+};
 
   const handleForgotPassword = async () => {
     if (!formData.email) {
