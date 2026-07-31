@@ -1,34 +1,59 @@
-from compat.flask import Blueprint
+from flask import Blueprint, jsonify, request
+from models import Category, Product, db
 
-product_bp = Blueprint("products", __name__)
+product_bp = Blueprint("products", __name__, url_prefix="/api/products")
 
 
-@product_bp.route("/api/products", methods=["GET"])
+@product_bp.route("", methods=["GET"])
 def list_products():
-    from app import DB, app
+    query = Product.query
+    category_slug = request.args.get("category")
+    if category_slug:
+        category = Category.query.filter_by(slug=category_slug).first()
+        if category:
+            query = query.filter_by(category_id=category.id)
+        else:
+            return jsonify([])  # unknown category slug — no matches
+    products = query.order_by(Product.id.desc()).all()
+    return jsonify([p.to_dict() for p in products])
 
-    return app.jsonify(DB.list_products())
+
+@product_bp.route("/<int:id>", methods=["GET"])
+def get_product(id):
+    product = Product.query.get_or_404(id)
+    return jsonify(product.to_dict())
 
 
-@product_bp.route("/api/products", methods=["POST"])
+@product_bp.route("", methods=["POST"])
 def create_product():
-    from app import DB, app, request
+    payload = request.get_json() or {}
+    product = Product(
+        name=payload["name"],
+        description=payload.get("description", ""),
+        price=payload["price"],
+        stock=payload.get("stock", 0),
+        image=payload.get("image"),
+        category_id=payload["category_id"],
+    )
+    db.session.add(product)
+    db.session.commit()
+    return jsonify(product.to_dict()), 201
 
-    product = DB.create_product(request.json or {})
-    return app.jsonify(product, 201)
 
-
-@product_bp.route("/api/products/<int:id>", methods=["PUT"])
+@product_bp.route("/<int:id>", methods=["PUT"])
 def update_product(id):
-    from app import DB, app, request
+    product = Product.query.get_or_404(id)
+    payload = request.get_json() or {}
+    for field in ["name", "description", "price", "stock", "image", "category_id"]:
+        if field in payload:
+            setattr(product, field, payload[field])
+    db.session.commit()
+    return jsonify(product.to_dict())
 
-    product = DB.update_product(id, request.json or {})
-    return app.jsonify(product)
 
-
-@product_bp.route("/api/products/<int:id>", methods=["DELETE"])
+@product_bp.route("/<int:id>", methods=["DELETE"])
 def delete_product(id):
-    from app import DB, app
-
-    DB.delete_product(id)
-    return app.jsonify({"success": True})
+    product = Product.query.get_or_404(id)
+    db.session.delete(product)
+    db.session.commit()
+    return jsonify({"success": True})
