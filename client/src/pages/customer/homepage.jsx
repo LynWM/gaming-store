@@ -11,6 +11,7 @@ import {
   ArrowRight,
   Star
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { useCart } from '../../context/cartContext'
 import { useWishlist } from '../../context/wishlistContext'
 
@@ -129,9 +130,9 @@ export default function Homepage() {
 
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full'>
             {FLASH_DEALS.map((product) => (
-              <a
+              <Link
                 key={product.id}
-                href={product.link}
+                to={product.link}
                 className='relative flex flex-col overflow-hidden rounded-2xl border border-[#231C30] bg-linear-to-b from-[#1B1625] to-[#110D1A] hover:border-[#7C3AED]'
               >
                 <div className='relative overflow-hidden'>
@@ -150,7 +151,7 @@ export default function Homepage() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => toggleWishlist(product)}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(product); }}
                     className='absolute bottom-3 right-3 w-9 h-9 rounded-full bg-black/50 border border-white/10 flex items-center justify-center text-white/80 hover:text-[#FB7185] hover:border-[#F43F5E]/40 backdrop-blur-sm'
                   >
                     <Heart size={15} />
@@ -185,13 +186,13 @@ export default function Homepage() {
 
                   <button
                     type="button"
-                    onClick={() => addToCart(product)}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); addToCart(product); }}
                     className='mt-4 w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#7C3AED] hover:bg-[#6D28D9] text-sm font-bold text-white'
                   >
                     <ShoppingCart size={15} /> Add To Cart
                   </button>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </section>

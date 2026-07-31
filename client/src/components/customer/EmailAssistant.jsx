@@ -1,9 +1,30 @@
-import { MessageCircle, Send } from 'lucide-react';
-import { useState } from 'react';
+import { MessageCircle, Send, MailCheck } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 export default function EmailAssistant() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([
+    { id: 1, title: 'Virtual inbox', body: 'Verification codes and reset codes appear here.' },
+  ]);
+  const location = useLocation();
+
+  useEffect(() => {
+    const fromStorage = window.localStorage.getItem('nextplay-messages');
+    if (fromStorage) {
+      setMessages(JSON.parse(fromStorage));
+    }
+  }, [location.pathname]);
+
+  const handleSend = () => {
+    if (!message.trim()) return;
+    const entry = { id: Date.now(), title: 'You', body: message };
+    const next = [entry, ...messages].slice(0, 5);
+    setMessages(next);
+    window.localStorage.setItem('nextplay-messages', JSON.stringify(next));
+    setMessage('');
+  };
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
@@ -15,9 +36,16 @@ export default function EmailAssistant() {
               <p className="text-xs text-gray-400">Verification and reset codes arrive here</p>
             </div>
           </div>
-          <div className="rounded-xl border border-[#231C30] bg-[#1B1625] p-3 text-sm text-gray-300">
-            <p className="font-medium text-white">Latest message</p>
-            <p className="mt-1">Your verification and reset codes will appear here in real time.</p>
+          <div className="max-h-56 space-y-2 overflow-y-auto rounded-xl border border-[#231C30] bg-[#1B1625] p-3 text-sm text-gray-300">
+            {messages.map((entry) => (
+              <div key={entry.id} className="rounded-lg border border-[#2A233A] bg-[#110D1A] p-2">
+                <div className="flex items-center gap-2 text-white">
+                  <MailCheck size={14} className="text-purple-400" />
+                  <span className="font-medium">{entry.title}</span>
+                </div>
+                <p className="mt-1 text-xs text-gray-400">{entry.body}</p>
+              </div>
+            ))}
           </div>
           <div className="mt-3 flex gap-2">
             <input
@@ -26,7 +54,7 @@ export default function EmailAssistant() {
               placeholder="Type a note"
               className="flex-1 rounded-lg border border-[#2A233A] bg-[#1B1625] px-3 py-2 text-sm text-white outline-none"
             />
-            <button className="rounded-lg bg-[#7C3AED] p-2 text-white">
+            <button onClick={handleSend} className="rounded-lg bg-[#7C3AED] p-2 text-white">
               <Send size={16} />
             </button>
           </div>

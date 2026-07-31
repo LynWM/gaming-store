@@ -8,6 +8,8 @@ import AdminLayout from "./layouts/adminLayout";
 
 import Homepage from './pages/customer/homepage'
 import CategoryPage from './pages/customer/CategoryPage'
+import ProductDetailPage from './pages/customer/ProductDetailPage'
+import FlashDealDetailPage from './pages/customer/FlashDealDetailPage'
 import Signup from './layouts/signup'
 import Login from './layouts/login'
 import CartPage from './pages/customer/CartPage'
@@ -28,6 +30,8 @@ function App() {
                <Route path="/" element={< Homepage />} />
                <Route path="/signup" element={<Signup />} />
                <Route path="/login" element={<Login />} />
+               <Route path="/products/:productSlug" element={<FlashDealDetailPage />} />
+               <Route path="/:slug/:productId" element={<ProductDetailPage />} />
                <Route path="/:slug" element={<CategoryPage />} />
                <Route path="/cart" element={<CartPage />} />
                <Route path="/wishlist" element={<WishlistPage />} />

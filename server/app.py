@@ -8,6 +8,51 @@ from compat.flask import Flask, request
 
 app = Flask(__name__)
 
+
+def create_app():
+    from routes.auth_routes import auth_bp
+    from routes.product_routes import product_bp
+    from routes.cart_routes import cart_bp
+    from routes.wishlist_routes import wishlist_bp
+
+    app.blueprint(auth_bp, url_prefix="")
+    app.blueprint(product_bp, url_prefix="")
+    app.blueprint(cart_bp, url_prefix="")
+    app.blueprint(wishlist_bp, url_prefix="")
+
+    @app.route("/health", methods=["GET"])
+    def health():
+        return app.jsonify({"status": "ok"})
+
+    @app.route("/api/users", methods=["GET"])
+    def list_users():
+        return app.jsonify(DB.list_users())
+
+    @app.route("/api/users/<int:id>", methods=["PUT"])
+    def update_user(id):
+        return app.jsonify(DB.update_user(id, request.json or {}))
+
+    @app.route("/api/users/<int:id>", methods=["DELETE"])
+    def delete_user(id):
+        return app.jsonify(DB.delete_user(id))
+
+    @app.route("/api/orders", methods=["GET"])
+    def list_orders():
+        return app.jsonify(DB.list_orders())
+
+    @app.route("/api/orders", methods=["POST"])
+    def create_order():
+        payload = request.json or {}
+        order = DB.create_order(payload.get("user_id"), payload.get("items", []), payload.get("total", 0))
+        return app.jsonify(order, 201)
+
+    @app.route("/api/orders/<int:id>", methods=["PUT"])
+    def update_order(id):
+        payload = request.json or {}
+        return app.jsonify(DB.update_order_status(id, payload.get("status", "pending")))
+
+    return app
+
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "store.db"
 
@@ -340,51 +385,7 @@ class StoreDB:
 
 
 DB = StoreDB(DB_PATH)
-
-
-def create_app():
-    from routes.auth_routes import auth_bp
-    from routes.product_routes import product_bp
-    from routes.cart_routes import cart_bp
-    from routes.wishlist_routes import wishlist_bp
-
-    app.blueprint(auth_bp, url_prefix="")
-    app.blueprint(product_bp, url_prefix="")
-    app.blueprint(cart_bp, url_prefix="")
-    app.blueprint(wishlist_bp, url_prefix="")
-
-    @app.route("/health", methods=["GET"])
-    def health():
-        return app.jsonify({"status": "ok"})
-
-    @app.route("/api/users", methods=["GET"])
-    def list_users():
-        return app.jsonify(DB.list_users())
-
-    @app.route("/api/users/<int:id>", methods=["PUT"])
-    def update_user(id):
-        return app.jsonify(DB.update_user(id, request.json or {}))
-
-    @app.route("/api/users/<int:id>", methods=["DELETE"])
-    def delete_user(id):
-        return app.jsonify(DB.delete_user(id))
-
-    @app.route("/api/orders", methods=["GET"])
-    def list_orders():
-        return app.jsonify(DB.list_orders())
-
-    @app.route("/api/orders", methods=["POST"])
-    def create_order():
-        payload = request.json or {}
-        order = DB.create_order(payload.get("user_id"), payload.get("items", []), payload.get("total", 0))
-        return app.jsonify(order, 201)
-
-    @app.route("/api/orders/<int:id>", methods=["PUT"])
-    def update_order(id):
-        payload = request.json or {}
-        return app.jsonify(DB.update_order_status(id, payload.get("status", "pending")))
-
-    return app
+create_app()
 
 
 if __name__ == "__main__":

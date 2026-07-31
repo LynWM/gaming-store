@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Heart, ShoppingCart, Star, Calendar, UserPlus } from "lucide-react";
 import { useCart } from "../context/cartContext";
 import { useWishlist } from "../context/wishlistContext";
@@ -36,7 +37,8 @@ export default function ProductCard({ product }) {
         />
       </button>
 
-      <div
+      <Link
+        to={product.detailPath || "#"}
         className="relative h-40 flex items-center justify-center overflow-hidden"
         style={{
           background: `radial-gradient(circle at 30% 20%, rgba(${accent.rgb},0.35), transparent 60%), linear-gradient(135deg, ${accent.from}, ${accent.via})`
@@ -53,12 +55,14 @@ export default function ProductCard({ product }) {
           className="w-16 h-16 rounded-2xl border border-white/10 bg-white/5 group-hover:scale-110 transition-transform duration-300"
           style={{ boxShadow: `0 0 30px rgba(${accent.rgb},0.25)` }}
         />
-      </div>
+      </Link>
 
       <div className="flex flex-col gap-2 p-4 flex-1">
-        <h3 className="text-sm font-semibold text-white leading-snug line-clamp-2 min-h-[2.5rem]">
-          {name}
-        </h3>
+        <Link to={product.detailPath || "#"}>
+          <h3 className="text-sm font-semibold text-white leading-snug line-clamp-2 min-h-[2.5rem] hover:text-purple-300 transition-colors">
+            {name}
+          </h3>
+        </Link>
 
         <div className="flex items-center gap-1.5">
           <Star size={13} className="fill-[#EAB308] text-[#EAB308]" />

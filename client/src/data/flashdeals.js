@@ -157,4 +157,29 @@ const FLASH_DEALS = [
   }
 ];
 
-export default FLASH_DEALS;
+function buildDetails(item) {
+  return [
+    `The ${item.name} (${item.description}) is one of our most requested flash deal items — grabbed fast whenever the discount goes live, thanks to a mix of strong performance and a price that undercuts retail.`,
+    `Every unit sold through NEXPLAY is inspected and tested before dispatch, so what you receive is guaranteed to match the condition advertised, whether it's brand new sealed stock or a certified open-box unit.`,
+    `This flash deal price is limited to available stock — once it sells out it returns to standard pricing, so it's worth locking in while the discount badge is still showing.`
+  ];
+}
+
+function buildSpecs(item) {
+  return {
+    Condition: "Brand new, sealed",
+    "Deal price": `KSh ${item.price.toLocaleString()}`,
+    "Regular price": `KSh ${item.oldPrice.toLocaleString()}`,
+    Savings: item.discount,
+    Rating: `${item.rating} / 5 (${item.reviews.toLocaleString()} reviews)`
+  };
+}
+
+const ENRICHED_FLASH_DEALS = FLASH_DEALS.map((item) => ({
+  ...item,
+  details: buildDetails(item),
+  specs: buildSpecs(item),
+  detailPath: item.link
+}));
+
+export default ENRICHED_FLASH_DEALS;

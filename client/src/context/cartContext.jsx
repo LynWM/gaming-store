@@ -15,26 +15,32 @@ export function CartProvider({ children }) {
     }).catch(() => {});
   }, [user?.id]);
 
+  const syncWithServer = useCallback(async (nextItems) => {
+    if (!user?.id) return;
+    const payload = nextItems.map((item) => ({ product_id: item.id, quantity: item.quantity }));
+    try {
+      await api.addToCart(user.id, { product_id: payload[0]?.product_id, quantity: payload[0]?.quantity || 1 });
+    } catch {
+      // ignore sync failures and keep UI responsive
+    }
+  }, [user?.id]);
+
   const addToCart = useCallback((product) => {
     setItems((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...prev, { ...product, quantity: 1 }];
+      const next = prev.some((item) => item.id === product.id)
+        ? prev.map((item) =>
+            item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          )
+        : [...prev, { ...product, quantity: 1 }];
+      syncWithServer(next);
+      return next;
     });
-  }, []);
+  }, [syncWithServer]);
 
   const removeFromCart = useCallback(async (productId) => {
-    if (user?.id) {
-      const target = items.find((item) => item.id === productId);
-      if (target?.cartId) {
-        await api.removeFromCart(user.id, target.cartId);
-      }
+    const target = items.find((item) => item.id === productId);
+    if (user?.id && target?.cartId) {
+      await api.removeFromCart(user.id, target.cartId);
     }
     setItems((prev) => prev.filter((item) => item.id !== productId));
   }, [items, user?.id]);

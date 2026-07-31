@@ -113,10 +113,12 @@ class Flask:
                 request.json = data
 
                 response = None
+                print(f"Incoming {method} {path}")
                 for (rule, methods), handler in self.server.app.routes.items():
                     if method not in methods:
                         continue
                     match = self._match_rule(rule, path)
+                    print(f"Trying {rule} -> {match}")
                     if match:
                         request.url_params = match
                         try:
@@ -126,6 +128,8 @@ class Flask:
                         break
 
                 if response is None:
+                    print(f"No route match for {method} {path}")
+                    print("Available routes:", list(self.server.app.routes.keys()))
                     response = self.server.app.jsonify({"error": "Not found"}, status_code=404)
 
                 self.send_response(response.status_code)
@@ -146,19 +150,37 @@ class Flask:
             def _match_rule(self, rule, path):
                 if rule == path:
                     return {}
-                pattern = re.escape(rule)
-                pattern = pattern.replace(r"\<int:id\>", r"(?P<id>[^/]+)")
-                pattern = pattern.replace(r"\<int:user_id\>", r"(?P<user_id>[^/]+)")
-                pattern = pattern.replace(r"\<int:cart_id\>", r"(?P<cart_id>[^/]+)")
-                pattern = pattern.replace(r"\<int:wishlist_id\>", r"(?P<wishlist_id>[^/]+)")
-                pattern = pattern.replace(r"\<int:product_id\>", r"(?P<product_id>[^/]+)")
-                pattern = pattern.replace(r"\<int:order_id\>", r"(?P<order_id>[^/]+)")
-                pattern = pattern.replace(r"\<string:name\>", r"(?P<name>[^/]+)")
-                pattern = pattern.replace(r"\<path:path\>", r"(?P<path>.+)")
-                match = re.fullmatch(pattern, path)
-                if match:
-                    return match.groupdict()
-                return None
+
+                rule_parts = [part for part in rule.strip("/").split("/") if part]
+                path_parts = [part for part in path.strip("/").split("/") if part]
+
+                if len(rule_parts) != len(path_parts):
+                    if len(rule_parts) == len(path_parts) + 1 and rule_parts and rule_parts[-1] == "<path:path>":
+                        return {"path": "/".join(path_parts[len(rule_parts) - 1:])}
+                    return None
+
+                params = {}
+                for index, (rule_part, path_part) in enumerate(zip(rule_parts, path_parts)):
+                    if rule_part.startswith("<") and rule_part.endswith(">"):
+                        if rule_part.startswith("<int:"):
+                            name = rule_part[5:-1]
+                            if not path_part.isdigit():
+                                return None
+                            params[name] = int(path_part)
+                        elif rule_part.startswith("<string:"):
+                            name = rule_part[8:-1]
+                            if not path_part:
+                                return None
+                            params[name] = path_part
+                        elif rule_part == "<path:path>":
+                            params["path"] = "/".join(path_parts[index:])
+                            break
+                        else:
+                            return None
+                    elif rule_part != path_part:
+                        return None
+
+                return params
 
         server = HTTPServer((host, port), Handler)
         server.app = self

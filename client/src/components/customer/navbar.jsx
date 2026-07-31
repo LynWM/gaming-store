@@ -66,12 +66,13 @@ export default function Navbar() {
         </Link>
 
         {user ? (
-          <button
-            onClick={logout}
-            className="flex items-center gap-2 px-4 py-2 bg-[#1B1625] text-sm text-gray-200 rounded-full border border-[#2A233A] hover:bg-[#231C30]"
-          >
-            <User size={16} /> {user.first_name}
-          </button>
+          <div className="flex items-center gap-2 rounded-full border border-[#2A233A] bg-[#1B1625] px-3 py-2 text-sm text-gray-200">
+            <User size={16} className="text-purple-400" />
+            <span className="font-medium">{user.first_name}</span>
+            <button onClick={logout} className="ml-1 rounded-full bg-[#231C30] px-2 py-1 text-[11px] font-semibold text-white">
+              Logout
+            </button>
+          </div>
         ) : (
           <Link
             to="/signup"
