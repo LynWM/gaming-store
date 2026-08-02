@@ -8,14 +8,19 @@ import AdminLayout from "./layouts/adminLayout";
 
 import Homepage from './pages/customer/homepage'
 import CategoryPage from './pages/customer/CategoryPage'
+
 import Signup from './layouts/signup'
 import Login from './layouts/login'
+
 import CartPage from './pages/customer/CartPage'
 import WishlistPage from './pages/customer/WishlistPage'
 import FlashDealsPage from './pages/customer/FlashDealDetailPage'
 import ProductDetailPage from './pages/customer/ProductDetailPage'
-import AdminDashboard from './pages/admin/AdminDashboard'
 
+import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminProducts from "./pages/admin/AdminProducts";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminOrders from "./pages/admin/AdminOrders";
 
 function App() {
   return (
@@ -40,9 +45,9 @@ function App() {
            {/* Admin pages */}
            <Route path="/admin" element={<AdminLayout />}>
              <Route index element={<AdminDashboard />} />
-             <Route path="products" element={<AdminDashboard />} />
-             <Route path="users" element={<AdminDashboard />} />
-             <Route path="orders" element={<AdminDashboard />} />
+             <Route path="products" element={<AdminProducts />} />
+             <Route path="users" element={<AdminUsers />} />
+             <Route path="orders" element={<AdminOrders />} />
            </Route>
          </Routes>
        </BrowserRouter>

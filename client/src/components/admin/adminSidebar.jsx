@@ -1,21 +1,11 @@
 import { NavLink } from 'react-router-dom';
-
-const links = [
-  { to: '/admin', label: 'Dashboard' },
-  { to: '/admin/products', label: 'Products' },
-  { to: '/admin/users', label: 'Users' },
-  { to: '/admin/orders', label: 'Orders' },
-];
+import { ADMIN_NAV_LINKS } from '../../components/admin/adminNav';
 
 export default function AdminSidebar() {
   return (
     <aside className="hidden min-h-screen w-64 border-r border-[#231C30] bg-[#110D1A] p-6 lg:block">
-      <div className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#A855F7]">NEXPLAY</p>
-        <h2 className="mt-2 text-xl font-bold text-white">Admin</h2>
-      </div>
       <nav className="space-y-2">
-        {links.map((link) => (
+        {ADMIN_NAV_LINKS.map((link) => (
           <NavLink
             key={link.to}
             to={link.to}

@@ -20,6 +20,7 @@ export const api = {
   resetPassword: (data) => request('/api/auth/reset-password', { method: 'POST', body: JSON.stringify(data) }),
   getProducts: (category) => request(category ? `/api/products?category=${category}` : '/api/products'),
   getProduct: (id) => request(`/api/products/${id}`),
+  getCategories: () => request('/api/categories'),
   getDeals: () => request('/api/deals'),
   createProduct: (data) => request('/api/products', { method: 'POST', body: JSON.stringify(data) }),
   updateProduct: (id, data) => request(`/api/products/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
