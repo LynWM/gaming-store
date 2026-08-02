@@ -3,17 +3,28 @@ from models import Category, Product, db
 
 product_bp = Blueprint("products", __name__, url_prefix="/api/products")
 
-
 @product_bp.route("", methods=["GET"])
 def list_products():
     query = Product.query
     category_slug = request.args.get("category")
+    search = request.args.get("search")
+
     if category_slug:
         category = Category.query.filter_by(slug=category_slug).first()
         if category:
             query = query.filter_by(category_id=category.id)
         else:
             return jsonify([])  # unknown category slug — no matches
+
+    if search:
+        like_pattern = f"%{search}%"
+        query = query.filter(
+            db.or_(
+                Product.name.ilike(like_pattern),
+                Product.description.ilike(like_pattern),
+            )
+        )
+
     products = query.order_by(Product.id.desc()).all()
     return jsonify([p.to_dict() for p in products])
 

@@ -6,6 +6,10 @@ order_bp = Blueprint("orders", __name__, url_prefix="/api/orders")
 
 @order_bp.route("", methods=["GET"])
 def list_orders():
+    query = Order.query
+    user_id = request.args.get("user_id")
+    if user_id:
+        query = query.filter_by(user_id=user_id)
     orders = Order.query.order_by(Order.id.desc()).all()
     return jsonify([o.to_dict() for o in orders])
 

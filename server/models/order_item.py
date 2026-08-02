@@ -10,11 +10,15 @@ class OrderItem(db.Model):
     quantity = db.Column(db.Integer, nullable=False, default=1)
     price_at_purchase = db.Column(db.Float, nullable=False)
 
+    product = db.relationship("Product")
+
     def to_dict(self):
         return {
             "id": self.id,
             "order_id": self.order_id,
             "product_id": self.product_id,
+            "product_name": self.product.name if self.product else None,
+            "product_image": self.product.image if self.product else None,
             "quantity": self.quantity,
             "price_at_purchase": self.price_at_purchase,
         }

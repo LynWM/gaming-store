@@ -1,4 +1,5 @@
-import { Heart, ShoppingCart, Star, Calendar, UserPlus } from "lucide-react";
+import { useState } from "react";
+import { Heart, ShoppingCart, Star, Calendar, UserPlus, Check } from "lucide-react";
 import { useCart } from "../context/cartContext";
 import { useWishlist } from "../context/wishlistContext";
 import { Link } from "react-router-dom";
@@ -11,14 +12,24 @@ const CTA_ICONS = {
 export default function ProductCard({ product }) {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const [justAdded, setJustAdded] = useState(false);
   const saved = isInWishlist(product.id);
-  const { name, image, price, oldPrice, rating, reviews, tag, accent, ctaLabel = "Add to Cart" } = product;
+  const { name, image, price, oldPrice, rating, reviews, tag, ctaLabel = "Add to Cart" } = product;
+  const accent = product.accent || { hex: "#7C3AED", rgb: "124,58,237", from: "#7C3AED", via: "#6D28D9" };
   const CtaIcon = CTA_ICONS[ctaLabel] || ShoppingCart;
 
   const tagStyles = {
     New: "bg-[#3B82F6]/15 text-[#60A5FA]",
     Hot: "bg-[#EF4444]/15 text-[#F87171]",
     Sale: "bg-[#10B981]/15 text-[#34D399]"
+  };
+
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart(product);
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 1500);
   };
 
   return (
@@ -89,16 +100,12 @@ export default function ProductCard({ product }) {
         </div>
 
         <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            addToCart(product);
-          }}
-          className="mt-2 w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
-          style={{ backgroundColor: accent.hex }}
+          onClick={handleAddToCart}
+          className="mt-2 w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold text-white transition-all duration-200 hover:-translate-y-0.5"
+          style={{ backgroundColor: justAdded ? "#10B981" : accent.hex }}
         >
-          <CtaIcon size={14} />
-          {ctaLabel}
+          {justAdded ? <Check size={14} /> : <CtaIcon size={14} />}
+          {justAdded ? "Added!" : ctaLabel}
         </button>
       </div>
     </Link>

@@ -115,12 +115,29 @@ with app.app_context():
                         "Street Fighter 6 Showdown", "Fortnite Duos Cup"],
     }
 
+    category_fallback_images = {
+        "consoles": "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=800",
+        "games": "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800",
+        "monitors": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800",
+        "laptops": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800",
+        "board-games": "https://images.unsplash.com/photo-1611371805429-8b5c1b2c34ba?w=800",
+        "accessories": "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=800",
+        "services": "https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?w=800",
+        "tournaments": "https://images.unsplash.com/photo-1558008258-3256797b43f3?w=800",
+    }
+
     for slug, names in category_names.items():
         for i, name in enumerate(names):
             if name in products_by_name:
-                continue  # skip duplicates already added via flash deals
+                continue
             base_price = 2999 + (i * 1500) + (len(slug) * 700)
-            add_product(name, f"{name} — quality gear for your setup", base_price, slug)
+            add_product(
+                name,
+                f"{name} — quality gear for your setup",
+                base_price,
+                slug,
+                category_fallback_images.get(slug, "")
+        )
 
     db.session.commit()
 

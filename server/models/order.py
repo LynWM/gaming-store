@@ -25,5 +25,6 @@ class Order(db.Model):
             } if self.user else None,
             "total": self.total,
             "status": self.status,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
             "items": [item.to_dict() for item in self.items],
         }
