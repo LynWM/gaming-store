@@ -28,7 +28,11 @@ export default function ProductCard({ product }) {
       style={{ ["--accent"]: accent.hex }}
     >
       <button
-        onClick={() => toggleWishlist(product)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleWishlist(product);
+        }}
         aria-label={saved ? "Remove from wishlist" : "Save to wishlist"}
         className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-black/40 backdrop-blur flex items-center justify-center transition-colors hover:bg-black/60"
       >
@@ -85,7 +89,11 @@ export default function ProductCard({ product }) {
         </div>
 
         <button
-          onClick={() => addToCart(product)}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            addToCart(product);
+          }}
           className="mt-2 w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
           style={{ backgroundColor: accent.hex }}
         >

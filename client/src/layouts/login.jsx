@@ -1,34 +1,36 @@
 import { useState } from 'react';
-import { Gamepad2, Eye, EyeOff, Mail, Lock, ArrowRight, KeyRound, CheckCircle2 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Gamepad2, Eye, EyeOff, Mail, Lock, ArrowRight, KeyRound } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
 
 export default function Login() {
   const { login, forgotPassword, resetPassword } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [infoMessage] = useState(location.state?.message || '');
   const [resetVisible, setResetVisible] = useState(false);
   const [resetCode, setResetCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  const result = await login(formData.email, formData.password);
+    e.preventDefault();
+    const result = await login(formData.email, formData.password);
 
-  if (result.success) {
-    if (result.user.role === "admin") {
-      navigate('/admin');
+    if (result.success) {
+      if (result.user.role === "admin") {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     } else {
-      navigate('/');
+      setError(result.error || 'Invalid email or password');
     }
-  } else {
-    setError(result.error || 'Invalid email or password');
-  }
-};
+  };
 
   const handleForgotPassword = async () => {
     if (!formData.email) {
@@ -73,6 +75,12 @@ export default function Login() {
           <h2 className="text-2xl font-bold tracking-tight text-white mb-2">Welcome Back, Player One</h2>
           <p className="text-sm text-[#8c92b2]">Enter your credentials to access your dashboard</p>
         </div>
+
+        {infoMessage && (
+          <p className="text-sm text-[#9d4edd] text-center mb-4 bg-[#1c1f30] border border-[#2a2f4a] rounded-lg py-2 px-3">
+            {infoMessage}
+          </p>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>

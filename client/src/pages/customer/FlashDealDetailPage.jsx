@@ -55,6 +55,7 @@ export default function FlashDealsPage() {
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
+                      e.stopPropagation();
                       toggleWishlist(product);
                     }}
                     className="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-black/50 border border-white/10 flex items-center justify-center text-white/80 hover:text-[#FB7185] hover:border-[#F43F5E]/40 backdrop-blur-sm"
@@ -89,9 +90,10 @@ export default function FlashDealsPage() {
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
+                      e.stopPropagation();
                       addToCart(product);
                     }}
-                    className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#7C3AED] hover:bg-[#6D28D9] text-sm font-bold text-white"
+                    className='mt-4 w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#7C3AED] hover:bg-[#6D28D9] text-sm font-bold text-white'
                   >
                     <ShoppingCart size={15} /> Add To Cart
                   </button>

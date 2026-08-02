@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 import { useAuth } from "./authContext";
 
@@ -6,6 +7,7 @@ const CartContext = createContext();
 
 export function CartProvider({ children }) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [items, setItems] = useState([]);
 
   useEffect(() => {
@@ -16,6 +18,10 @@ export function CartProvider({ children }) {
   }, [user?.id]);
 
   const addToCart = useCallback((product) => {
+    if (!user?.id) {
+      navigate('/login', { state: { message: 'Please log in to add items to your cart' } });
+      return;
+    }
     setItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
       if (existing) {
@@ -27,7 +33,7 @@ export function CartProvider({ children }) {
       }
       return [...prev, { ...product, quantity: 1 }];
     });
-  }, []);
+  }, [user, navigate]);
 
   const removeFromCart = useCallback(async (productId) => {
     if (user?.id) {
