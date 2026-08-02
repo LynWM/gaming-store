@@ -94,15 +94,21 @@ export default function CartPage() {
             <span className="text-white font-bold">Total</span>
             <span className="text-white font-extrabold text-lg">KSH {totalPrice.toLocaleString()}</span>
           </div>
-          <button
-            onClick={clearCart}
-            className="w-full py-3 rounded-lg bg-[#EF4444] hover:bg-[#DC2626] text-white text-sm font-bold transition-colors"
-          >
-            Clear Cart
-          </button>
-          <button className="w-full py-3 rounded-lg bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-sm font-bold transition-colors">
-            Checkout
-          </button>
+
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+            <button
+              onClick={clearCart}
+              className="flex-1 py-3 rounded-lg border border-[#EF4444]/40 text-[#F87171] hover:bg-[#EF4444]/10 text-sm font-bold transition-colors"
+            >
+              Clear Cart
+            </button>
+            <Link
+              to="/checkout"
+              className="flex-1 py-3 rounded-lg bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-sm font-bold text-center transition-colors"
+            >
+              Checkout
+            </Link>
+          </div>
         </section>
       </main>
     </div>

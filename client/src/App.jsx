@@ -6,7 +6,7 @@ import { WishlistProvider } from "./context/wishlistContext";
 import CustomerLayout from "./layouts/customerLayout";
 import AdminLayout from "./layouts/adminLayout";
 
-import Homepage from './pages/customer/homepage'
+import Homepage from './pages/customer/HomePage'
 import CategoryPage from './pages/customer/CategoryPage'
 
 import Signup from './layouts/signup'
@@ -14,7 +14,7 @@ import Login from './layouts/login'
 
 import CartPage from './pages/customer/CartPage'
 import WishlistPage from './pages/customer/WishlistPage'
-import FlashDealsPage from './pages/customer/FlashDealDetailPage'
+import FlashDealsPage from './pages/customer/FlashDealPage'
 import ProductDetailPage from './pages/customer/ProductDetailPage'
 
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -23,6 +23,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminOrders from "./pages/admin/AdminOrders";
 import SearchResultsPage from "./pages/customer/SearchResultsPage";
 import CustomerOrdersPage from "./pages/customer/CustomerOrdersPage";
+import CheckoutPage from "./pages/customer/CheckoutPage";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
                   <Route path="/wishlist" element={<WishlistPage />} />
                   <Route path="/search" element={<SearchResultsPage />} />
                   <Route path="/orders" element={<CustomerOrdersPage/>}/>
+                  <Route path="/checkout" element={<CheckoutPage />}/>
                 </Route>
 
                 {/* Admin pages */}
