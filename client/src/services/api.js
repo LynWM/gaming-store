@@ -18,7 +18,17 @@ export const api = {
   login: (data) => request('/api/auth/login', { method: 'POST', body: JSON.stringify(data) }),
   forgotPassword: (data) => request('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify(data) }),
   resetPassword: (data) => request('/api/auth/reset-password', { method: 'POST', body: JSON.stringify(data) }),
-  getProducts: (category) => request(category ? `/api/products?category=${category}` : '/api/products'),
+  getProducts: (params) => {
+    const query = new URLSearchParams();
+    if (typeof params === 'string'){
+      if (params) query.set('category', params);
+    } else if (params && typeof params === 'object') {
+      if (params.category) query.set('category', params.category)
+      if (params.search) query.set('search', params.search);
+    }
+    const qs = query.toString();
+    return request(qs ? `/api/products?${qs}` : '/api/products');
+  },
   getProduct: (id) => request(`/api/products/${id}`),
   getCategories: () => request('/api/categories'),
   getDeals: () => request('/api/deals'),
@@ -31,7 +41,7 @@ export const api = {
   getCart: (userId) => request(`/api/cart/${userId}`),
   addToCart: (userId, data) => request(`/api/cart/${userId}`, { method: 'POST', body: JSON.stringify(data) }),
   removeFromCart: (userId, cartId) => request(`/api/cart/${userId}/${cartId}`, { method: 'DELETE' }),
-  getOrders: () => request('/api/orders'),
+  getOrders: (userId) => request(userId ? `/api/orders?user_id=${userId}` : '/api/orders'),
   createOrder: (data) => request('/api/orders', { method: 'POST', body: JSON.stringify(data) }),
   updateOrderStatus: (id, data) => request(`/api/orders/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
 };
