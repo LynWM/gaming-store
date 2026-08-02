@@ -21,6 +21,8 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminOrders from "./pages/admin/AdminOrders";
+import SearchResultsPage from "./pages/customer/SearchResultsPage";
+import CustomerOrdersPage from "./pages/customer/CustomerOrdersPage";
 
 function App() {
   return (
@@ -41,6 +43,8 @@ function App() {
                   <Route path="/:slug" element={<CategoryPage />} />
                   <Route path="/cart" element={<CartPage />} />
                   <Route path="/wishlist" element={<WishlistPage />} />
+                  <Route path="/search" element={<SearchResultsPage />} />
+                  <Route path="/orders" element={<CustomerOrdersPage/>}/>
                 </Route>
 
                 {/* Admin pages */}
