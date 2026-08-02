@@ -34,6 +34,8 @@ const BADGE_STYLES = {
   HOT: 'bg-[#F59E0B] text-[#1C1200]'
 }
 
+const FLASH_DEALS_PREVIEW_LIMIT = 4;
+
 export default function Homepage() {
   const { addToCart } = useCart();
   const { toggleWishlist } = useWishlist();
@@ -44,6 +46,8 @@ export default function Homepage() {
       .then(setFlashDeals)
       .catch((err) => console.error('Failed to load deals:', err));
   }, []);
+
+  const previewDeals = flashDeals.slice(0, FLASH_DEALS_PREVIEW_LIMIT);
 
   return (
     <div className='min-h-screen bg-[#0B0712] text-white font-sans antialiased select-none'>
@@ -123,7 +127,7 @@ export default function Homepage() {
           </div>
 
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full'>
-            {flashDeals.map((product) => (
+            {previewDeals.map((product) => (
               <Link
                 key={product.id}
                 to={product.link}
@@ -145,7 +149,11 @@ export default function Homepage() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => toggleWishlist(product)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggleWishlist(product);
+                    }}
                     className='absolute bottom-3 right-3 w-9 h-9 rounded-full bg-black/50 border border-white/10 flex items-center justify-center text-white/80 hover:text-[#FB7185] hover:border-[#F43F5E]/40 backdrop-blur-sm'
                   >
                     <Heart size={15} />
@@ -180,7 +188,11 @@ export default function Homepage() {
 
                   <button
                     type="button"
-                    onClick={() => addToCart(product)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      addToCart(product);
+                    }}
                     className='mt-4 w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#7C3AED] hover:bg-[#6D28D9] text-sm font-bold text-white'
                   >
                     <ShoppingCart size={15} /> Add To Cart

@@ -24,37 +24,38 @@ import AdminOrders from "./pages/admin/AdminOrders";
 
 function App() {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <WishlistProvider>
-        <BrowserRouter>
-           <Routes>
+    <BrowserRouter>
+      <AuthProvider>
+        <CartProvider>
+          <WishlistProvider>
+            
+              <Routes>
              
-             {/* Customer pages */}
-             <Route element={<CustomerLayout />}>
-               <Route path="/" element={< Homepage />} />
-               <Route path="/signup" element={<Signup />} />
-               <Route path="/login" element={<Login />} />
-               <Route path="/flash-deals" element={<FlashDealsPage />} />
-               <Route path="/products/:productId" element={<ProductDetailPage />} />
-               <Route path="/:slug" element={<CategoryPage />} />
-               <Route path="/cart" element={<CartPage />} />
-               <Route path="/wishlist" element={<WishlistPage />} />
-             </Route>
+                {/* Customer pages */}
+                <Route element={<CustomerLayout />}>
+                  <Route path="/" element={< Homepage />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/flash-deals" element={<FlashDealsPage />} />
+                  <Route path="/products/:productId" element={<ProductDetailPage />} />
+                  <Route path="/:slug" element={<CategoryPage />} />
+                  <Route path="/cart" element={<CartPage />} />
+                  <Route path="/wishlist" element={<WishlistPage />} />
+                </Route>
 
-           {/* Admin pages */}
-           <Route path="/admin" element={<AdminLayout />}>
-             <Route index element={<AdminDashboard />} />
-             <Route path="products" element={<AdminProducts />} />
-             <Route path="users" element={<AdminUsers />} />
-             <Route path="orders" element={<AdminOrders />} />
-           </Route>
-         </Routes>
-       </BrowserRouter>
-       </WishlistProvider>
-      </CartProvider>
-    </AuthProvider>
-   
+                {/* Admin pages */}
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="products" element={<AdminProducts />} />
+                  <Route path="users" element={<AdminUsers />} />
+                  <Route path="orders" element={<AdminOrders />} />
+                </Route>
+              </Routes>
+            
+          </WishlistProvider>
+        </CartProvider>
+      </AuthProvider>
+    </BrowserRouter> 
   );
 }
 
