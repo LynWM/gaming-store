@@ -75,7 +75,7 @@ with app.app_context():
          "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=800", 25),
     ]
 
-    now = datetime.utcnow()
+    now = datetime.utcnow()  # noqa: DTZ003
     for i, (name, desc, price, slug, image, discount) in enumerate(flash_deal_products):
         add_product(name, desc, price, slug, image)
         db.session.flush()
